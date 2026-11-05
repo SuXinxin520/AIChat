@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AIChat</string>
+    <string name="back">Back</string>
+
+    <string name="home_user">User</string>
+    <string name="home_avatar">Avatar</string>
+    <string name="settings">Settings</string>
+    <string name="home_new_chat">New chat</string>
+    <string name="home_new_chat_soon">New chat is coming in the next version</string>
+    <string name="home_empty_title">No characters yet</string>
+    <string name="home_empty_subtitle">Tap + at the bottom right to add one</string>
+
+    <string name="settings_general">General</string>
+    <string name="general_title">General</string>
+    <string name="general_stream">Streaming</string>
+    <string name="general_stream_desc">Show text as it is generated. Turn off to wait for the whole reply, then type it out.</string>
+    <string name="settings_api">API</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_permissions">Permissions</string>
+    <string name="settings_storage">Storage</string>
+    <string name="settings_about">About</string>
+    <string name="placeholder_body">This feature is coming in a later version</string>
+
+    <string name="api_title">API</string>
+    <string name="api_add">Add API</string>
+    <string name="api_empty_title">No API configured yet</string>
+    <string name="api_empty_subtitle">Tap the button below to choose a provider</string>
+    <string name="api_edit_add">Add API</string>
+    <string name="api_edit_edit">Edit API</string>
+    <string name="api_hint">Pick a provider to fill in the name, URL and model. You can still edit them.</string>
+    <string name="api_name">Name</string>
+    <string name="api_name_hint">Name this API</string>
+    <string name="api_url">API URL</string>
+    <string name="api_key">API Key</string>
+    <string name="api_model">Model</string>
+    <string name="api_paste">Paste</string>
+    <string name="api_clipboard_empty">Clipboard is empty</string>
+    <string name="api_show_key">Show key</string>
+    <string name="api_hide_key">Hide key</string>
+    <string name="api_choose_model">Choose model</string>
+    <string name="api_test">Test connection</string>
+    <string name="api_testing">Testing</string>
+    <string name="api_save">Save</string>
+    <string name="api_url_required">Enter the API URL first</string>
+    <string name="api_key_required">Enter the API key first</string>
+    <string name="api_delete">Delete this API</string>
+    <string name="api_delete_title">Delete this API?</string>
+    <string name="api_delete_message">The URL and key will not be kept. You will need to enter them again.</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="api_unnamed">Unnamed</string>
+    <string name="api_custom">Custom</string>
+
+    <string name="api_test_ok">Connected (HTTP %1$d)</string>
+    <string name="api_test_bad_key">Failed: invalid key (HTTP %1$d)</string>
+    <string name="api_test_bad_url">Failed: wrong URL (HTTP %1$d)</string>
+    <string name="api_test_failed">Failed (HTTP %1$d)</string>
+    <string name="api_test_error">Failed: %1$s</string>
+
+    <string name="language_title">Language</string>
+    <string name="language_system">Follow system</string>
+    <string name="language_zh">中文</string>
+    <string name="language_en">English</string>
+
+    <string name="theme_title">Theme</string>
+    <string name="theme_system">Follow system</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+
+    <string name="about_version">Version %1$s</string>
+    <string name="about_author">Author %1$s</string>
+    <string name="author_name">苏昕昕</string>
+
+    <string name="save">Save</string>
+    <string name="avatar_pick_failed">Could not read that image</string>
+
+    <string name="profile_title">User</string>
+    <string name="profile_avatar_hint">Tap the avatar to change it</string>
+    <string name="profile_name">Name</string>
+    <string name="profile_name_hint">Your name</string>
+    <string name="profile_prompt">Prompt</string>
+    <string name="profile_prompt_hint">Tell the AI who you are: background, preferences, tone</string>
+
+    <string name="role_sheet_title">Add character</string>
+    <string name="role_sheet_item_title">Create a character</string>
+    <string name="role_sheet_item_subtitle">Set an avatar, name and prompt</string>
+    <string name="role_edit_add">Add character</string>
+    <string name="role_edit_edit">Edit character</string>
+    <string name="role_name">Name</string>
+    <string name="role_name_hint">Character name</string>
+    <string name="role_prompt">Prompt</string>
+    <string name="role_prompt_hint">Who this character is and how they talk</string>
+    <string name="role_name_required">Enter a name first</string>
+    <string name="role_delete">Delete this character</string>
+    <string name="role_delete_title">Delete this character?</string>
+    <string name="role_delete_message">This cannot be undone.</string>
+    <string name="clear_chat">Clear chat history</string>
+    <string name="clear_chat_title">Clear chat history?</string>
+    <string name="clear_chat_message">Only this character\'s messages will be removed. The character, its prompt and your profile stay.</string>
+    <string name="clear">Clear</string>
+
+    <string name="chat_no_message">No messages yet</string>
+    <string name="draft_prefix">[Draft]</string>
+    <string name="time_just_now">Just now</string>
+    <string name="time_minutes_ago">%1$d min ago</string>
+    <string name="time_half_hour_ago">30 min ago</string>
+    <string name="time_hour_ago">1 hour ago</string>
+
+    <string name="chat_input_hint">Message</string>
+    <string name="chat_send">Send</string>
+    <string name="chat_attach">Attachment</string>
+    <string name="chat_attach_image">Image</string>
+    <string name="chat_attach_file">File</string>
+    <string name="chat_preview_image">[Image]</string>
+    <string name="chat_preview_file">[File]</string>
+    <string name="chat_role_settings">Character settings</string>
+    <string name="chat_file_pick_failed">Could not read that file</string>
+    <string name="chat_no_api">Add and enable an API in settings first</string>
+    <string name="chat_typing">Typing</string>
+    <string name="chat_send_failed">Failed: %1$s</string>
+    <string name="sys_user_name">User name: %1$s</string>
+    <string name="sys_about_user">About the user:\n%1$s</string>
+    <string name="sys_role">Character:\n%1$s</string>
+</resources>

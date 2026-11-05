@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">爱聊</string>
+    <string name="back">返回</string>
+
+    <string name="home_user">用户</string>
+    <string name="home_avatar">头像</string>
+    <string name="settings">设置</string>
+    <string name="home_new_chat">新建会话</string>
+    <string name="home_new_chat_soon">新建会话将在下个版本提供</string>
+    <string name="home_empty_title">还没有角色</string>
+    <string name="home_empty_subtitle">点右下角的 + 添加角色</string>
+
+    <string name="settings_general">通用</string>
+    <string name="general_title">通用</string>
+    <string name="general_stream">流式输出</string>
+    <string name="general_stream_desc">边生成边显示；关闭后等整段生成完再逐字打出来</string>
+    <string name="settings_api">API</string>
+    <string name="settings_language">语言</string>
+    <string name="settings_theme">主题</string>
+    <string name="settings_permissions">权限</string>
+    <string name="settings_storage">存储</string>
+    <string name="settings_about">关于</string>
+    <string name="placeholder_body">该功能将在后续版本提供</string>
+
+    <string name="api_title">API</string>
+    <string name="api_add">添加 API</string>
+    <string name="api_empty_title">还没有配置 API</string>
+    <string name="api_empty_subtitle">点击下方按钮选择服务商</string>
+    <string name="api_edit_add">添加 API</string>
+    <string name="api_edit_edit">编辑 API</string>
+    <string name="api_hint">选一个常用服务商，自动填入名称、地址和模型；也可以手动改。</string>
+    <string name="api_name">名称</string>
+    <string name="api_name_hint">给这条 API 起个名字</string>
+    <string name="api_url">API 地址</string>
+    <string name="api_key">API Key</string>
+    <string name="api_model">模型</string>
+    <string name="api_paste">粘贴</string>
+    <string name="api_clipboard_empty">剪贴板里没有内容</string>
+    <string name="api_show_key">显示密钥</string>
+    <string name="api_hide_key">隐藏密钥</string>
+    <string name="api_choose_model">选择模型</string>
+    <string name="api_test">测试连接</string>
+    <string name="api_testing">测试中</string>
+    <string name="api_save">保存</string>
+    <string name="api_url_required">请先填写 API 地址</string>
+    <string name="api_key_required">请先填写 API Key</string>
+    <string name="api_delete">删除这条 API</string>
+    <string name="api_delete_title">删除这条 API？</string>
+    <string name="api_delete_message">删除后地址和密钥都不会保留，需要重新填写。</string>
+    <string name="delete">删除</string>
+    <string name="cancel">取消</string>
+    <string name="api_unnamed">未命名</string>
+    <string name="api_custom">自定义</string>
+
+    <string name="api_test_ok">连接成功（HTTP %1$d）</string>
+    <string name="api_test_bad_key">连接失败：密钥无效（HTTP %1$d）</string>
+    <string name="api_test_bad_url">连接失败：地址不对（HTTP %1$d）</string>
+    <string name="api_test_failed">连接失败（HTTP %1$d）</string>
+    <string name="api_test_error">连接失败：%1$s</string>
+
+    <string name="language_title">语言</string>
+    <string name="language_system">跟随系统</string>
+    <string name="language_zh">中文</string>
+    <string name="language_en">English</string>
+
+    <string name="theme_title">主题</string>
+    <string name="theme_system">跟随系统</string>
+    <string name="theme_light">浅色</string>
+    <string name="theme_dark">深色</string>
+
+    <string name="about_version">版本 %1$s</string>
+    <string name="about_author">作者 %1$s</string>
+    <string name="author_name">苏昕昕</string>
+
+    <string name="save">保存</string>
+    <string name="avatar_pick_failed">读取图片失败</string>
+
+    <string name="profile_title">用户</string>
+    <string name="profile_avatar_hint">点击头像更换</string>
+    <string name="profile_name">名称</string>
+    <string name="profile_name_hint">你的名字</string>
+    <string name="profile_prompt">提示词</string>
+    <string name="profile_prompt_hint">告诉 AI 你是谁：背景、偏好、说话风格</string>
+
+    <string name="role_sheet_title">添加角色</string>
+    <string name="role_sheet_item_title">创建新角色</string>
+    <string name="role_sheet_item_subtitle">设定头像、名称和提示词</string>
+    <string name="role_edit_add">添加角色</string>
+    <string name="role_edit_edit">角色编辑</string>
+    <string name="role_name">名称</string>
+    <string name="role_name_hint">角色名称</string>
+    <string name="role_prompt">提示词</string>
+    <string name="role_prompt_hint">角色的设定和说话方式</string>
+    <string name="role_name_required">请先填写名称</string>
+    <string name="role_delete">删除这个角色</string>
+    <string name="role_delete_title">删除这个角色？</string>
+    <string name="role_delete_message">删除后无法恢复。</string>
+    <string name="clear_chat">清空聊天记录</string>
+    <string name="clear_chat_title">清空聊天记录？</string>
+    <string name="clear_chat_message">只清除这个角色的对话内容，角色本身、提示词和你的资料都会保留。</string>
+    <string name="clear">清空</string>
+
+    <string name="chat_no_message">还没有消息</string>
+    <string name="draft_prefix">[草稿]</string>
+    <string name="time_just_now">刚刚</string>
+    <string name="time_minutes_ago">%1$d分钟前</string>
+    <string name="time_half_hour_ago">半小时前</string>
+    <string name="time_hour_ago">一小时前</string>
+
+    <string name="chat_input_hint">发消息…</string>
+    <string name="chat_send">发送</string>
+    <string name="chat_attach">附件</string>
+    <string name="chat_attach_image">图片</string>
+    <string name="chat_attach_file">文件</string>
+    <string name="chat_preview_image">[图片]</string>
+    <string name="chat_preview_file">[文件]</string>
+    <string name="chat_role_settings">角色设置</string>
+    <string name="chat_file_pick_failed">读取文件失败</string>
+    <string name="chat_no_api">请先在设置里添加并启用一个 API</string>
+    <string name="chat_typing">输入中</string>
+    <string name="chat_send_failed">发送失败：%1$s</string>
+    <string name="sys_user_name">用户名字：%1$s</string>
+    <string name="sys_about_user">关于用户：\n%1$s</string>
+    <string name="sys_role">角色设定：\n%1$s</string>
+</resources>
