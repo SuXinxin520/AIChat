@@ -4,7 +4,7 @@
 
 AI Chat Reimagined // Chat with your AI characters
 
-[简体中文](README.md) | English
+[简体中文](README.md) | English | [Deutsch](README.de.md) | [Français](README.fr.md) | [日本語](README.ja.md) | [한국어](README.ko.md) | [Русский](README.ru.md)
 
 <sub>App languages: 中文 · English · Deutsch · Français · 日本語 · 한국어 · Русский</sub>
 

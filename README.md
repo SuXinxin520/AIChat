@@ -4,7 +4,7 @@
 
 AI Chat Reimagined // 和你的 AI 角色聊天
 
-简体中文 | [English](README.en.md)
+简体中文 | [English](README.en.md) | [Deutsch](README.de.md) | [Français](README.fr.md) | [日本語](README.ja.md) | [한국어](README.ko.md) | [Русский](README.ru.md)
 
 <sub>界面语言：中文 · English · Deutsch · Français · 日本語 · 한국어 · Русский</sub>
 
