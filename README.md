@@ -6,6 +6,8 @@ AI Chat Reimagined // 和你的 AI 角色聊天
 
 简体中文 | [English](README.en.md)
 
+<sub>界面语言：中文 · English · Deutsch · Français · 日本語 · 한국어 · Русский</sub>
+
 [![GitHub release](https://img.shields.io/github/v/release/SuXinxin520/AIChat?label=release)](https://github.com/SuXinxin520/AIChat/releases)
 [![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-blue)](./LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/SuXinxin520/AIChat?style=social)](https://github.com/SuXinxin520/AIChat/stargazers)
