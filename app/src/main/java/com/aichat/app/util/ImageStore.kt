@@ -7,19 +7,9 @@ import android.provider.OpenableColumns
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import java.io.File
-import java.util.UUID
+import java.io.InputStream
 
 object ImageStore {
-
-    /** 把选中的文件复制到应用私有目录，返回本地绝对路径。 */
-    fun copyToAppStorage(context: Context, uri: Uri, folder: String = "avatars"): String? = runCatching {
-        val dir = File(context.filesDir, folder).apply { mkdirs() }
-        val file = File(dir, "${UUID.randomUUID()}.img")
-        context.contentResolver.openInputStream(uri)?.use { input ->
-            file.outputStream().use { output -> input.copyTo(output) }
-        } ?: return@runCatching null
-        file.absolutePath
-    }.getOrNull()
 
     /** 取文件的显示名。 */
     fun displayName(context: Context, uri: Uri): String = runCatching {
@@ -29,13 +19,15 @@ object ImageStore {
         }
     }.getOrNull() ?: "file"
 
-    /** 按目标尺寸降采样解码，头像不需要原图。 */
-    fun loadBitmap(path: String?, targetPx: Int = 240): ImageBitmap? {
-        if (path.isNullOrBlank()) return null
-        if (!File(path).exists()) return null
-        return runCatching {
+    /**
+     * 支持两种引用：文件夹里的文档 URI（content://）和旧版本遗留的本地文件路径。
+     * 按目标尺寸降采样解码。
+     */
+    fun loadBitmap(context: Context, ref: String?, targetPx: Int = 240): ImageBitmap? {
+        if (ref.isNullOrBlank()) return null
+        return try {
             val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-            BitmapFactory.decodeFile(path, bounds)
+            open(context, ref)?.use { BitmapFactory.decodeStream(it, null, bounds) }
 
             var sample = 1
             val width = bounds.outWidth
@@ -46,7 +38,19 @@ object ImageStore {
             }
 
             val options = BitmapFactory.Options().apply { inSampleSize = sample }
-            BitmapFactory.decodeFile(path, options)?.asImageBitmap()
-        }.getOrNull()
+            open(context, ref)?.use { BitmapFactory.decodeStream(it, null, options)?.asImageBitmap() }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun open(context: Context, ref: String): InputStream? = try {
+        if (ref.startsWith("content://")) {
+            context.contentResolver.openInputStream(Uri.parse(ref))
+        } else {
+            File(ref).takeIf { it.exists() }?.inputStream()
+        }
+    } catch (e: Exception) {
+        null
     }
 }

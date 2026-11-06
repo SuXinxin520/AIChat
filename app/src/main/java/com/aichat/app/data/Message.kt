@@ -89,6 +89,34 @@ object MessageStore {
         return saved
     }
 
+    fun updateText(context: Context, id: String, text: String) {
+        val all = loadAll(context).toMutableList()
+        val index = all.indexOfFirst { it.id == id }
+        if (index < 0) return
+        all[index] = all[index].copy(text = text)
+        saveAll(context, all)
+    }
+
+    fun delete(context: Context, id: String) {
+        saveAll(context, loadAll(context).filterNot { it.id == id })
+    }
+
+    fun deleteMany(context: Context, ids: Collection<String>) {
+        if (ids.isEmpty()) return
+        val targets = ids.toSet()
+        saveAll(context, loadAll(context).filterNot { it.id in targets })
+    }
+
+    /** 删除该消息之后的所有消息（含其它角色的不动）。 */
+    fun deleteAfter(context: Context, roleId: String, id: String) {
+        val all = loadAll(context)
+        val roleMessages = all.filter { it.roleId == roleId }.sortedBy { it.at }
+        val index = roleMessages.indexOfFirst { it.id == id }
+        if (index < 0) return
+        val keep = roleMessages.take(index + 1).map { it.id }.toSet()
+        saveAll(context, all.filterNot { it.roleId == roleId && it.id !in keep })
+    }
+
     fun clearRole(context: Context, roleId: String) {
         saveAll(context, loadAll(context).filterNot { it.roleId == roleId })
     }

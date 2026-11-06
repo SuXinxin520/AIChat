@@ -31,7 +31,11 @@ import com.aichat.app.data.AppPrefs
 fun GeneralScreen(onBack: () -> Unit) {
     val colors = MaterialTheme.colorScheme
     val context = LocalContext.current
+
     var stream by remember { mutableStateOf(AppPrefs.streamEnabled(context)) }
+    var typewriter by remember { mutableStateOf(AppPrefs.typewriterEnabled(context)) }
+    var drop by remember { mutableStateOf(AppPrefs.cursorDropEnabled(context)) }
+    var caretFade by remember { mutableStateOf(AppPrefs.cursorFadeEnabled(context)) }
 
     Scaffold(
         containerColor = colors.background,
@@ -48,39 +52,63 @@ fun GeneralScreen(onBack: () -> Unit) {
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 14.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = stringResource(R.string.general_stream),
-                        fontSize = 15.sp,
-                        color = colors.onSurface
-                    )
-                    Spacer(Modifier.height(3.dp))
-                    Text(
-                        text = stringResource(R.string.general_stream_desc),
-                        fontSize = 12.5.sp,
-                        color = colors.onSurfaceVariant
-                    )
+            ToggleRow(
+                title = stringResource(R.string.general_stream),
+                description = stringResource(R.string.general_stream_desc),
+                checked = stream,
+                onCheckedChange = {
+                    AppPrefs.setStreamEnabled(context, it)
+                    stream = it
                 }
+            )
 
-                Switch(
-                    checked = stream,
-                    onCheckedChange = {
-                        AppPrefs.setStreamEnabled(context, it)
-                        stream = it
-                    },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = colors.onPrimary,
-                        checkedTrackColor = colors.primary,
-                        checkedBorderColor = colors.primary
-                    )
-                )
-            }
+            HorizontalDivider(
+                modifier = Modifier.padding(horizontal = 20.dp),
+                thickness = 0.6.dp,
+                color = colors.outlineVariant
+            )
+
+            ToggleRow(
+                title = stringResource(R.string.general_typewriter),
+                description = stringResource(R.string.general_typewriter_desc),
+                checked = typewriter,
+                onCheckedChange = {
+                    AppPrefs.setTypewriterEnabled(context, it)
+                    typewriter = it
+                }
+            )
+
+            HorizontalDivider(
+                modifier = Modifier.padding(horizontal = 20.dp),
+                thickness = 0.6.dp,
+                color = colors.outlineVariant
+            )
+
+            ToggleRow(
+                title = stringResource(R.string.general_drop),
+                description = stringResource(R.string.general_drop_desc),
+                checked = drop,
+                onCheckedChange = {
+                    AppPrefs.setCursorDropEnabled(context, it)
+                    drop = it
+                }
+            )
+
+            HorizontalDivider(
+                modifier = Modifier.padding(horizontal = 20.dp),
+                thickness = 0.6.dp,
+                color = colors.outlineVariant
+            )
+
+            ToggleRow(
+                title = stringResource(R.string.general_caret),
+                description = stringResource(R.string.general_caret_desc),
+                checked = caretFade,
+                onCheckedChange = {
+                    AppPrefs.setCursorFadeEnabled(context, it)
+                    caretFade = it
+                }
+            )
 
             HorizontalDivider(
                 modifier = Modifier.padding(horizontal = 20.dp),
@@ -88,5 +116,37 @@ fun GeneralScreen(onBack: () -> Unit) {
                 color = colors.outlineVariant
             )
         }
+    }
+}
+
+@Composable
+private fun ToggleRow(
+    title: String,
+    description: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    val colors = MaterialTheme.colorScheme
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(text = title, fontSize = 15.sp, color = colors.onSurface)
+            Spacer(Modifier.height(3.dp))
+            Text(text = description, fontSize = 12.5.sp, color = colors.onSurfaceVariant)
+        }
+
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = colors.onPrimary,
+                checkedTrackColor = colors.primary,
+                checkedBorderColor = colors.primary
+            )
+        )
     }
 }

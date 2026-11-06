@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -74,6 +75,28 @@ fun AboutScreen(onBack: () -> Unit) {
                 fontSize = 13.sp,
                 color = colors.onSurfaceVariant
             )
+
+            Spacer(Modifier.height(30.dp))
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.about_privacy_title),
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = colors.onSurface
+                )
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    text = stringResource(R.string.about_privacy_body),
+                    fontSize = 12.5.sp,
+                    lineHeight = 19.sp,
+                    color = colors.onSurfaceVariant
+                )
+            }
         }
     }
 }

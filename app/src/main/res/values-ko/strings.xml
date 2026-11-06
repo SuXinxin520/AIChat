@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AIChat</string>
+    <string name="back">뒤로</string>
+
+    <string name="home_user">사용자</string>
+    <string name="home_avatar">아바타</string>
+    <string name="settings">설정</string>
+    <string name="home_new_chat">새 채팅</string>
+    <string name="home_new_chat_soon">새 채팅은 다음 버전에서 제공됩니다</string>
+    <string name="home_empty_title">아직 캐릭터가 없습니다</string>
+    <string name="home_empty_subtitle">오른쪽 아래 + 를 눌러 추가하세요</string>
+
+    <string name="settings_general">일반</string>
+    <string name="general_title">일반</string>
+    <string name="general_stream">스트리밍</string>
+    <string name="general_stream_desc">생성되는 대로 표시합니다. 끄면 전체 응답을 기다린 뒤 표시합니다.</string>
+    <string name="general_typewriter">타자기 효과</string>
+    <string name="general_typewriter_desc">답장을 한 글자씩 표시합니다. 끄면 한 번에 표시합니다.</string>
+    <string name="settings_api">API</string>
+    <string name="settings_language">언어</string>
+    <string name="settings_theme">테마</string>
+    <string name="settings_permissions">권한</string>
+    <string name="settings_storage">저장공간</string>
+    <string name="settings_about">정보</string>
+    <string name="placeholder_body">이 기능은 이후 버전에서 제공됩니다</string>
+
+    <string name="api_title">API</string>
+    <string name="api_add">API 추가</string>
+    <string name="api_empty_title">설정된 API가 없습니다</string>
+    <string name="api_empty_subtitle">아래 버튼을 눌러 서비스를 선택하세요</string>
+    <string name="api_edit_add">API 추가</string>
+    <string name="api_edit_edit">API 편집</string>
+    <string name="api_hint">서비스를 선택하면 이름, URL, 모델이 자동으로 채워집니다. 직접 수정할 수도 있습니다.</string>
+    <string name="api_name">이름</string>
+    <string name="api_name_hint">이 API의 이름</string>
+    <string name="api_url">API URL</string>
+    <string name="api_get_key">API 키 받기</string>
+    <string name="api_key">API Key</string>
+    <string name="api_model">모델</string>
+    <string name="api_paste">붙여넣기</string>
+    <string name="api_clipboard_empty">클립보드가 비어 있습니다</string>
+    <string name="api_show_key">키 표시</string>
+    <string name="api_hide_key">키 숨기기</string>
+    <string name="api_choose_model">모델 선택</string>
+    <string name="api_test">연결 테스트</string>
+    <string name="api_testing">테스트 중</string>
+    <string name="api_save">저장</string>
+    <string name="api_url_required">먼저 API URL을 입력하세요</string>
+    <string name="api_key_required">먼저 API Key를 입력하세요</string>
+    <string name="api_delete">이 API 삭제</string>
+    <string name="api_delete_title">이 API를 삭제할까요?</string>
+    <string name="api_delete_message">URL과 키는 저장되지 않으며 다시 입력해야 합니다.</string>
+    <string name="delete">삭제</string>
+    <string name="cancel">취소</string>
+    <string name="api_unnamed">이름 없음</string>
+    <string name="api_custom">사용자 지정</string>
+
+    <string name="api_test_ok">연결 성공 (HTTP %1$d)</string>
+    <string name="api_test_bad_key">실패: 키가 올바르지 않습니다 (HTTP %1$d)</string>
+    <string name="api_test_bad_url">실패: URL이 잘못되었습니다 (HTTP %1$d)</string>
+    <string name="api_test_failed">실패 (HTTP %1$d)</string>
+    <string name="api_test_error">실패: %1$s</string>
+
+    <string name="language_title">언어</string>
+    <string name="language_system">시스템 설정 따르기</string>
+    <string name="language_zh">中文</string>
+    <string name="language_en">English</string>
+    <string name="language_ru">Русский</string>
+    <string name="language_ja">日本語</string>
+    <string name="language_de">Deutsch</string>
+    <string name="language_fr">Français</string>
+    <string name="language_ko">한국어</string>
+
+    <string name="theme_title">테마</string>
+    <string name="theme_system">시스템 설정 따르기</string>
+    <string name="theme_light">라이트</string>
+    <string name="theme_dark">다크</string>
+
+    <string name="storage_setup_title">저장 폴더 선택</string>
+    <string name="storage_setup_desc">채팅, 캐릭터, 아바타, 첨부파일과 설정이 모두 선택한 폴더에 저장됩니다. 앱을 삭제해도 폴더는 남으며, 재설치 후 같은 폴더를 선택하면 데이터가 복원됩니다.</string>
+    <string name="storage_pick">폴더 선택</string>
+    <string name="storage_pick_tip">「Documents/AIChat」처럼 고정된 위치를 권장합니다</string>
+    <string name="storage_title">저장공간</string>
+    <string name="storage_folder">폴더</string>
+    <string name="storage_total">총 %1$s</string>
+    <string name="storage_data">데이터</string>
+    <string name="storage_avatars">아바타</string>
+    <string name="storage_attachments">첨부파일</string>
+    <string name="storage_sync">지금 동기화</string>
+    <string name="storage_synced">동기화됨</string>
+    <string name="storage_change">폴더 변경</string>
+
+    <string name="about_privacy_title">개인정보와 데이터</string>
+    <string name="about_privacy_body">모든 사용자의 개인정보와 데이터 안전을 존중합니다. 설정, 채팅, 아바타와 첨부파일은 선택한 폴더에만 저장되며 외부 서버로 전송되지 않습니다.</string>
+
+    <string name="about_version">버전 %1$s</string>
+    <string name="about_author">제작 %1$s</string>
+    <string name="author_name">苏昕昕</string>
+
+    <string name="save">저장</string>
+    <string name="avatar_pick_failed">이미지를 읽을 수 없습니다</string>
+
+    <string name="profile_title">사용자</string>
+    <string name="profile_avatar_hint">아바타를 눌러 변경</string>
+    <string name="profile_name">이름</string>
+    <string name="profile_name_hint">당신의 이름</string>
+    <string name="profile_prompt">프롬프트</string>
+    <string name="profile_prompt_hint">AI에게 당신을 알려주세요: 배경, 선호, 말투</string>
+
+    <string name="role_sheet_title">캐릭터 추가</string>
+    <string name="role_sheet_item_title">새 캐릭터 만들기</string>
+    <string name="role_sheet_item_subtitle">아바타, 이름, 프롬프트 설정</string>
+    <string name="role_edit_add">캐릭터 추가</string>
+    <string name="role_edit_edit">캐릭터 편집</string>
+    <string name="role_name">이름</string>
+    <string name="role_name_hint">캐릭터 이름</string>
+    <string name="role_prompt">프롬프트</string>
+    <string name="role_prompt_hint">캐릭터의 설정과 말투</string>
+    <string name="role_name_required">먼저 이름을 입력하세요</string>
+    <string name="role_delete">이 캐릭터 삭제</string>
+    <string name="role_delete_title">이 캐릭터를 삭제할까요?</string>
+    <string name="role_delete_message">삭제하면 되돌릴 수 없습니다.</string>
+    <string name="clear_chat">채팅 기록 지우기</string>
+    <string name="clear_chat_title">채팅 기록을 지울까요?</string>
+    <string name="clear_chat_message">이 캐릭터의 메시지만 삭제됩니다. 캐릭터, 프롬프트와 프로필은 유지됩니다.</string>
+    <string name="clear">지우기</string>
+
+    <string name="chat_no_message">아직 메시지가 없습니다</string>
+    <string name="draft_prefix">[임시저장]</string>
+    <string name="time_just_now">방금</string>
+    <string name="time_minutes_ago">%1$d분 전</string>
+    <string name="time_half_hour_ago">30분 전</string>
+    <string name="time_hour_ago">1시간 전</string>
+
+    <string name="chat_input_hint">메시지</string>
+    <string name="chat_send">보내기</string>
+    <string name="chat_attach">첨부</string>
+    <string name="chat_attach_image">이미지</string>
+    <string name="chat_attach_file">파일</string>
+    <string name="chat_preview_image">[이미지]</string>
+    <string name="chat_preview_file">[파일]</string>
+    <string name="chat_role_settings">캐릭터 설정</string>
+    <string name="chat_copy">복사</string>
+    <string name="chat_copied">복사됨</string>
+    <string name="chat_edit">편집</string>
+    <string name="chat_edit_title">메시지 편집</string>
+    <string name="chat_edit_warning">저장하면 이 메시지 이후가 삭제되고 답장이 다시 생성됩니다.</string>
+    <string name="chat_selected_count">%1$d개 선택됨</string>
+    <string name="chat_delete_title">이 메시지를 삭제할까요?</string>
+    <string name="chat_delete_message">삭제하면 되돌릴 수 없습니다.</string>
+    <string name="chat_regenerate">다시 생성</string>
+    <string name="chat_file_pick_failed">파일을 읽을 수 없습니다</string>
+    <string name="chat_no_api">먼저 설정에서 API를 추가하고 켜세요</string>
+    <string name="chat_typing">입력 중</string>
+    <string name="chat_send_failed">실패: %1$s</string>
+    <string name="sys_user_name">사용자 이름: %1$s</string>
+    <string name="sys_about_user">사용자 정보:\n%1$s</string>
+    <string name="sys_role">캐릭터 설정:\n%1$s</string>
+
+    <string name="unsaved_title">저장되지 않은 변경 사항</string>
+    <string name="unsaved_message">저장하지 않고 나가면 변경 사항이 사라집니다.</string>
+    <string name="unsaved_never">다시 안 보기</string>
+    <string name="unsaved_discard">나가기</string>
+    <string name="unsaved_save">저장 후 나가기</string>
+
+    <string name="general_drop">물방울 애니메이션</string>
+    <string name="general_drop_desc">입력란을 누르면 커서에 물방울이 떨어집니다. 끄면 제자리에서 서서히 사라집니다.</string>
+    <string name="general_caret">커서 페이드</string>
+    <string name="general_caret_desc">커서가 깜빡이는 대신 서서히 나타났다 사라집니다. 끄면 시스템 깜박임으로 돌아갑니다.</string>
+</resources>

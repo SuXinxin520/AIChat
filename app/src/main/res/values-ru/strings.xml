@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AIChat</string>
+    <string name="back">Назад</string>
+
+    <string name="home_user">Пользователь</string>
+    <string name="home_avatar">Аватар</string>
+    <string name="settings">Настройки</string>
+    <string name="home_new_chat">Новый чат</string>
+    <string name="home_new_chat_soon">Новый чат появится в следующей версии</string>
+    <string name="home_empty_title">Персонажей пока нет</string>
+    <string name="home_empty_subtitle">Нажмите + в правом нижнем углу, чтобы добавить</string>
+
+    <string name="settings_general">Общие</string>
+    <string name="general_title">Общие</string>
+    <string name="general_stream">Потоковая передача</string>
+    <string name="general_stream_desc">Показывать текст по мере генерации. Выключите, чтобы дождаться полного ответа.</string>
+    <string name="general_typewriter">Эффект печатной машинки</string>
+    <string name="general_typewriter_desc">Показывать ответ по одному символу. Выключите, чтобы показывать сразу целиком.</string>
+    <string name="settings_api">API</string>
+    <string name="settings_language">Язык</string>
+    <string name="settings_theme">Тема</string>
+    <string name="settings_permissions">Разрешения</string>
+    <string name="settings_storage">Хранилище</string>
+    <string name="settings_about">О приложении</string>
+    <string name="placeholder_body">Эта функция появится в следующих версиях</string>
+
+    <string name="api_title">API</string>
+    <string name="api_add">Добавить API</string>
+    <string name="api_empty_title">API ещё не настроен</string>
+    <string name="api_empty_subtitle">Нажмите кнопку ниже, чтобы выбрать провайдера</string>
+    <string name="api_edit_add">Добавить API</string>
+    <string name="api_edit_edit">Изменить API</string>
+    <string name="api_hint">Выберите провайдера, чтобы заполнить название, адрес и модель. Их можно изменить вручную.</string>
+    <string name="api_name">Название</string>
+    <string name="api_name_hint">Название этого API</string>
+    <string name="api_url">Адрес API</string>
+    <string name="api_get_key">Получить API-ключ</string>
+    <string name="api_key">API-ключ</string>
+    <string name="api_model">Модель</string>
+    <string name="api_paste">Вставить</string>
+    <string name="api_clipboard_empty">Буфер обмена пуст</string>
+    <string name="api_show_key">Показать ключ</string>
+    <string name="api_hide_key">Скрыть ключ</string>
+    <string name="api_choose_model">Выбрать модель</string>
+    <string name="api_test">Проверить подключение</string>
+    <string name="api_testing">Проверка</string>
+    <string name="api_save">Сохранить</string>
+    <string name="api_url_required">Сначала введите адрес API</string>
+    <string name="api_key_required">Сначала введите API-ключ</string>
+    <string name="api_delete">Удалить этот API</string>
+    <string name="api_delete_title">Удалить этот API?</string>
+    <string name="api_delete_message">Адрес и ключ не сохранятся, их придётся ввести заново.</string>
+    <string name="delete">Удалить</string>
+    <string name="cancel">Отмена</string>
+    <string name="api_unnamed">Без названия</string>
+    <string name="api_custom">Свой вариант</string>
+
+    <string name="api_test_ok">Подключено (HTTP %1$d)</string>
+    <string name="api_test_bad_key">Ошибка: неверный ключ (HTTP %1$d)</string>
+    <string name="api_test_bad_url">Ошибка: неверный адрес (HTTP %1$d)</string>
+    <string name="api_test_failed">Ошибка (HTTP %1$d)</string>
+    <string name="api_test_error">Ошибка: %1$s</string>
+
+    <string name="language_title">Язык</string>
+    <string name="language_system">Как в системе</string>
+    <string name="language_zh">中文</string>
+    <string name="language_en">English</string>
+    <string name="language_ru">Русский</string>
+    <string name="language_ja">日本語</string>
+    <string name="language_de">Deutsch</string>
+    <string name="language_fr">Français</string>
+    <string name="language_ko">한국어</string>
+
+    <string name="theme_title">Тема</string>
+    <string name="theme_system">Как в системе</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Тёмная</string>
+
+    <string name="storage_setup_title">Выберите папку для хранения</string>
+    <string name="storage_setup_desc">Все чаты, персонажи, аватары, вложения и настройки хранятся в выбранной папке. При удалении приложения папка остаётся; после переустановки выберите ту же папку, и данные вернутся.</string>
+    <string name="storage_pick">Выбрать папку</string>
+    <string name="storage_pick_tip">Лучше выбрать постоянное место, например «Documents/AIChat»</string>
+    <string name="storage_title">Хранилище</string>
+    <string name="storage_folder">Папка</string>
+    <string name="storage_total">Всего %1$s</string>
+    <string name="storage_data">Данные</string>
+    <string name="storage_avatars">Аватары</string>
+    <string name="storage_attachments">Вложения</string>
+    <string name="storage_sync">Синхронизировать</string>
+    <string name="storage_synced">Синхронизировано</string>
+    <string name="storage_change">Сменить папку</string>
+
+    <string name="about_privacy_title">Конфиденциальность и данные</string>
+    <string name="about_privacy_body">Я уважаю конфиденциальность и безопасность данных каждого пользователя. Все настройки, чаты, аватары и вложения хранятся только в выбранной вами папке и не отправляются ни на какой сервер.</string>
+
+    <string name="about_version">Версия %1$s</string>
+    <string name="about_author">Автор %1$s</string>
+    <string name="author_name">苏昕昕</string>
+
+    <string name="save">Сохранить</string>
+    <string name="avatar_pick_failed">Не удалось прочитать изображение</string>
+
+    <string name="profile_title">Пользователь</string>
+    <string name="profile_avatar_hint">Нажмите на аватар, чтобы изменить</string>
+    <string name="profile_name">Имя</string>
+    <string name="profile_name_hint">Ваше имя</string>
+    <string name="profile_prompt">Промпт</string>
+    <string name="profile_prompt_hint">Расскажите ИИ о себе: опыт, предпочтения, стиль общения</string>
+
+    <string name="role_sheet_title">Добавить персонажа</string>
+    <string name="role_sheet_item_title">Создать персонажа</string>
+    <string name="role_sheet_item_subtitle">Задайте аватар, имя и промпт</string>
+    <string name="role_edit_add">Добавить персонажа</string>
+    <string name="role_edit_edit">Редактировать персонажа</string>
+    <string name="role_name">Имя</string>
+    <string name="role_name_hint">Имя персонажа</string>
+    <string name="role_prompt">Промпт</string>
+    <string name="role_prompt_hint">Кто этот персонаж и как он говорит</string>
+    <string name="role_name_required">Сначала введите имя</string>
+    <string name="role_delete">Удалить персонажа</string>
+    <string name="role_delete_title">Удалить этого персонажа?</string>
+    <string name="role_delete_message">Это действие нельзя отменить.</string>
+    <string name="clear_chat">Очистить историю</string>
+    <string name="clear_chat_title">Очистить историю чата?</string>
+    <string name="clear_chat_message">Будут удалены только сообщения этого персонажа. Персонаж, промпт и ваш профиль останутся.</string>
+    <string name="clear">Очистить</string>
+
+    <string name="chat_no_message">Сообщений пока нет</string>
+    <string name="draft_prefix">[Черновик]</string>
+    <string name="time_just_now">Только что</string>
+    <string name="time_minutes_ago">%1$d мин назад</string>
+    <string name="time_half_hour_ago">30 мин назад</string>
+    <string name="time_hour_ago">1 ч назад</string>
+
+    <string name="chat_input_hint">Сообщение</string>
+    <string name="chat_send">Отправить</string>
+    <string name="chat_attach">Вложение</string>
+    <string name="chat_attach_image">Изображение</string>
+    <string name="chat_attach_file">Файл</string>
+    <string name="chat_preview_image">[Изображение]</string>
+    <string name="chat_preview_file">[Файл]</string>
+    <string name="chat_role_settings">Настройки персонажа</string>
+    <string name="chat_copy">Копировать</string>
+    <string name="chat_copied">Скопировано</string>
+    <string name="chat_edit">Изменить</string>
+    <string name="chat_edit_title">Изменить сообщение</string>
+    <string name="chat_edit_warning">После сохранения все сообщения ниже будут удалены, а ответ сгенерируется заново.</string>
+    <string name="chat_selected_count">Выбрано: %1$d</string>
+    <string name="chat_delete_title">Удалить это сообщение?</string>
+    <string name="chat_delete_message">Это действие нельзя отменить.</string>
+    <string name="chat_regenerate">Сгенерировать заново</string>
+    <string name="chat_file_pick_failed">Не удалось прочитать файл</string>
+    <string name="chat_no_api">Сначала добавьте и включите API в настройках</string>
+    <string name="chat_typing">Печатает</string>
+    <string name="chat_send_failed">Ошибка: %1$s</string>
+    <string name="sys_user_name">Имя пользователя: %1$s</string>
+    <string name="sys_about_user">О пользователе:\n%1$s</string>
+    <string name="sys_role">Персонаж:\n%1$s</string>
+
+    <string name="unsaved_title">Изменения не сохранены</string>
+    <string name="unsaved_message">Если выйти сейчас, изменения будут потеряны.</string>
+    <string name="unsaved_never">Не показывать</string>
+    <string name="unsaved_discard">Выйти</string>
+    <string name="unsaved_save">Сохранить</string>
+
+    <string name="general_drop">Анимация капли</string>
+    <string name="general_drop_desc">При нажатии на поле капля падает на курсор. Выключите — капля просто исчезнет на месте.</string>
+    <string name="general_caret">Плавное появление курсора</string>
+    <string name="general_caret_desc">Курсор плавно появляется и исчезает вместо мигания. Выключите, чтобы вернуть системное мигание.</string>
+</resources>

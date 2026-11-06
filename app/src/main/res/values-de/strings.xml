@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AIChat</string>
+    <string name="back">Zurück</string>
+
+    <string name="home_user">Benutzer</string>
+    <string name="home_avatar">Avatar</string>
+    <string name="settings">Einstellungen</string>
+    <string name="home_new_chat">Neuer Chat</string>
+    <string name="home_new_chat_soon">Der neue Chat kommt in der nächsten Version</string>
+    <string name="home_empty_title">Noch keine Charaktere</string>
+    <string name="home_empty_subtitle">Tippen Sie unten rechts auf +, um einen hinzuzufügen</string>
+
+    <string name="settings_general">Allgemein</string>
+    <string name="general_title">Allgemein</string>
+    <string name="general_stream">Streaming</string>
+    <string name="general_stream_desc">Text während der Generierung anzeigen. Ausschalten, um auf die komplette Antwort zu warten.</string>
+    <string name="general_typewriter">Schreibmaschinen-Effekt</string>
+    <string name="general_typewriter_desc">Antworten Zeichen für Zeichen anzeigen. Ausschalten, um sie auf einmal anzuzeigen.</string>
+    <string name="settings_api">API</string>
+    <string name="settings_language">Sprache</string>
+    <string name="settings_theme">Design</string>
+    <string name="settings_permissions">Berechtigungen</string>
+    <string name="settings_storage">Speicher</string>
+    <string name="settings_about">Über</string>
+    <string name="placeholder_body">Diese Funktion kommt in einer späteren Version</string>
+
+    <string name="api_title">API</string>
+    <string name="api_add">API hinzufügen</string>
+    <string name="api_empty_title">Noch keine API eingerichtet</string>
+    <string name="api_empty_subtitle">Tippen Sie unten, um einen Anbieter zu wählen</string>
+    <string name="api_edit_add">API hinzufügen</string>
+    <string name="api_edit_edit">API bearbeiten</string>
+    <string name="api_hint">Anbieter wählen füllt Name, URL und Modell aus. Sie können alles ändern.</string>
+    <string name="api_name">Name</string>
+    <string name="api_name_hint">Name dieser API</string>
+    <string name="api_url">API-URL</string>
+    <string name="api_get_key">API-Schlüssel abrufen</string>
+    <string name="api_key">API-Schlüssel</string>
+    <string name="api_model">Modell</string>
+    <string name="api_paste">Einfügen</string>
+    <string name="api_clipboard_empty">Zwischenablage ist leer</string>
+    <string name="api_show_key">Schlüssel anzeigen</string>
+    <string name="api_hide_key">Schlüssel verbergen</string>
+    <string name="api_choose_model">Modell wählen</string>
+    <string name="api_test">Verbindung testen</string>
+    <string name="api_testing">Wird getestet</string>
+    <string name="api_save">Speichern</string>
+    <string name="api_url_required">Bitte zuerst die API-URL eingeben</string>
+    <string name="api_key_required">Bitte zuerst den API-Schlüssel eingeben</string>
+    <string name="api_delete">Diese API löschen</string>
+    <string name="api_delete_title">Diese API löschen?</string>
+    <string name="api_delete_message">URL und Schlüssel werden nicht gespeichert und müssen neu eingegeben werden.</string>
+    <string name="delete">Löschen</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="api_unnamed">Unbenannt</string>
+    <string name="api_custom">Benutzerdefiniert</string>
+
+    <string name="api_test_ok">Verbunden (HTTP %1$d)</string>
+    <string name="api_test_bad_key">Fehlgeschlagen: ungültiger Schlüssel (HTTP %1$d)</string>
+    <string name="api_test_bad_url">Fehlgeschlagen: falsche URL (HTTP %1$d)</string>
+    <string name="api_test_failed">Fehlgeschlagen (HTTP %1$d)</string>
+    <string name="api_test_error">Fehlgeschlagen: %1$s</string>
+
+    <string name="language_title">Sprache</string>
+    <string name="language_system">Systemeinstellung folgen</string>
+    <string name="language_zh">中文</string>
+    <string name="language_en">English</string>
+    <string name="language_ru">Русский</string>
+    <string name="language_ja">日本語</string>
+    <string name="language_de">Deutsch</string>
+    <string name="language_fr">Français</string>
+    <string name="language_ko">한국어</string>
+
+    <string name="theme_title">Design</string>
+    <string name="theme_system">Systemeinstellung folgen</string>
+    <string name="theme_light">Hell</string>
+    <string name="theme_dark">Dunkel</string>
+
+    <string name="storage_setup_title">Speicherordner wählen</string>
+    <string name="storage_setup_desc">Chats, Charaktere, Avatare, Anhänge und Einstellungen werden im gewählten Ordner gespeichert. Beim Deinstallieren bleibt der Ordner erhalten; wählen Sie nach der Neuinstallation denselben Ordner, um alles zurückzubekommen.</string>
+    <string name="storage_pick">Ordner wählen</string>
+    <string name="storage_pick_tip">Ein fester Ort wie „Documents/AIChat“ ist ideal</string>
+    <string name="storage_title">Speicher</string>
+    <string name="storage_folder">Ordner</string>
+    <string name="storage_total">Insgesamt %1$s</string>
+    <string name="storage_data">Daten</string>
+    <string name="storage_avatars">Avatare</string>
+    <string name="storage_attachments">Anhänge</string>
+    <string name="storage_sync">Jetzt synchronisieren</string>
+    <string name="storage_synced">Synchronisiert</string>
+    <string name="storage_change">Ordner ändern</string>
+
+    <string name="about_privacy_title">Datenschutz und Daten</string>
+    <string name="about_privacy_body">Ich respektiere die Privatsphäre und Datensicherheit jedes Nutzers. Alle Einstellungen, Chats, Avatare und Anhänge bleiben im von Ihnen gewählten Ordner und werden nie auf einen Server hochgeladen.</string>
+
+    <string name="about_version">Version %1$s</string>
+    <string name="about_author">Autor %1$s</string>
+    <string name="author_name">苏昕昕</string>
+
+    <string name="save">Speichern</string>
+    <string name="avatar_pick_failed">Bild konnte nicht gelesen werden</string>
+
+    <string name="profile_title">Benutzer</string>
+    <string name="profile_avatar_hint">Auf den Avatar tippen, um ihn zu ändern</string>
+    <string name="profile_name">Name</string>
+    <string name="profile_name_hint">Ihr Name</string>
+    <string name="profile_prompt">Prompt</string>
+    <string name="profile_prompt_hint">Erzählen Sie der KI von sich: Hintergrund, Vorlieben, Ton</string>
+
+    <string name="role_sheet_title">Charakter hinzufügen</string>
+    <string name="role_sheet_item_title">Neuen Charakter erstellen</string>
+    <string name="role_sheet_item_subtitle">Avatar, Name und Prompt festlegen</string>
+    <string name="role_edit_add">Charakter hinzufügen</string>
+    <string name="role_edit_edit">Charakter bearbeiten</string>
+    <string name="role_name">Name</string>
+    <string name="role_name_hint">Name des Charakters</string>
+    <string name="role_prompt">Prompt</string>
+    <string name="role_prompt_hint">Wer dieser Charakter ist und wie er spricht</string>
+    <string name="role_name_required">Bitte zuerst einen Namen eingeben</string>
+    <string name="role_delete">Diesen Charakter löschen</string>
+    <string name="role_delete_title">Diesen Charakter löschen?</string>
+    <string name="role_delete_message">Das kann nicht rückgängig gemacht werden.</string>
+    <string name="clear_chat">Chatverlauf löschen</string>
+    <string name="clear_chat_title">Chatverlauf löschen?</string>
+    <string name="clear_chat_message">Nur die Nachrichten dieses Charakters werden gelöscht. Charakter, Prompt und Ihr Profil bleiben erhalten.</string>
+    <string name="clear">Löschen</string>
+
+    <string name="chat_no_message">Noch keine Nachrichten</string>
+    <string name="draft_prefix">[Entwurf]</string>
+    <string name="time_just_now">Gerade eben</string>
+    <string name="time_minutes_ago">vor %1$d Min.</string>
+    <string name="time_half_hour_ago">vor 30 Min.</string>
+    <string name="time_hour_ago">vor 1 Std.</string>
+
+    <string name="chat_input_hint">Nachricht</string>
+    <string name="chat_send">Senden</string>
+    <string name="chat_attach">Anhang</string>
+    <string name="chat_attach_image">Bild</string>
+    <string name="chat_attach_file">Datei</string>
+    <string name="chat_preview_image">[Bild]</string>
+    <string name="chat_preview_file">[Datei]</string>
+    <string name="chat_role_settings">Charakter-Einstellungen</string>
+    <string name="chat_copy">Kopieren</string>
+    <string name="chat_copied">Kopiert</string>
+    <string name="chat_edit">Bearbeiten</string>
+    <string name="chat_edit_title">Nachricht bearbeiten</string>
+    <string name="chat_edit_warning">Beim Speichern werden alle Nachrichten danach gelöscht und die Antwort neu erzeugt.</string>
+    <string name="chat_selected_count">%1$d ausgewählt</string>
+    <string name="chat_delete_title">Diese Nachricht löschen?</string>
+    <string name="chat_delete_message">Dies kann nicht rückgängig gemacht werden.</string>
+    <string name="chat_regenerate">Neu erzeugen</string>
+    <string name="chat_file_pick_failed">Datei konnte nicht gelesen werden</string>
+    <string name="chat_no_api">Zuerst in den Einstellungen eine API hinzufügen und aktivieren</string>
+    <string name="chat_typing">Schreibt</string>
+    <string name="chat_send_failed">Fehlgeschlagen: %1$s</string>
+    <string name="sys_user_name">Benutzername: %1$s</string>
+    <string name="sys_about_user">Über den Benutzer:\n%1$s</string>
+    <string name="sys_role">Charakter:\n%1$s</string>
+
+    <string name="unsaved_title">Ungespeicherte Änderungen</string>
+    <string name="unsaved_message">Änderungen gehen verloren, wenn du die Seite verlässt.</string>
+    <string name="unsaved_never">Nie mehr zeigen</string>
+    <string name="unsaved_discard">Verwerfen</string>
+    <string name="unsaved_save">Speichern</string>
+
+    <string name="general_drop">Tropfenanimation</string>
+    <string name="general_drop_desc">Beim Tippen fällt ein Tropfen auf den Cursor. Aus: Der Tropfen blendet an Ort und Stelle aus.</string>
+    <string name="general_caret">Cursor-Überblendung</string>
+    <string name="general_caret_desc">Der Cursor blendet sanft ein und aus statt zu blinken. Aus: Systemblinken.</string>
+</resources>

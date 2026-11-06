@@ -59,11 +59,7 @@ fun SettingsScreen(onBack: () -> Unit, onOpen: (Screen) -> Unit) {
             Icons.Outlined.Shield,
             Screen.Placeholder(stringResource(R.string.settings_permissions), placeholderBody)
         ),
-        SettingItem(
-            stringResource(R.string.settings_storage),
-            Icons.Outlined.Storage,
-            Screen.Placeholder(stringResource(R.string.settings_storage), placeholderBody)
-        ),
+        SettingItem(stringResource(R.string.settings_storage), Icons.Outlined.Storage, Screen.Storage),
         SettingItem(stringResource(R.string.settings_about), Icons.Outlined.Info, Screen.About)
     )
 

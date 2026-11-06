@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AIChat</string>
+    <string name="back">Retour</string>
+
+    <string name="home_user">Utilisateur</string>
+    <string name="home_avatar">Avatar</string>
+    <string name="settings">Paramètres</string>
+    <string name="home_new_chat">Nouvelle conversation</string>
+    <string name="home_new_chat_soon">La nouvelle conversation arrive dans la prochaine version</string>
+    <string name="home_empty_title">Aucun personnage pour l\'instant</string>
+    <string name="home_empty_subtitle">Touchez + en bas à droite pour en ajouter</string>
+
+    <string name="settings_general">Général</string>
+    <string name="general_title">Général</string>
+    <string name="general_stream">Diffusion en continu</string>
+    <string name="general_stream_desc">Afficher le texte au fur et à mesure. Désactivez pour attendre la réponse complète.</string>
+    <string name="general_typewriter">Effet machine à écrire</string>
+    <string name="general_typewriter_desc">Afficher la réponse caractère par caractère. Désactivez pour l\'afficher d\'un coup.</string>
+    <string name="settings_api">API</string>
+    <string name="settings_language">Langue</string>
+    <string name="settings_theme">Thème</string>
+    <string name="settings_permissions">Autorisations</string>
+    <string name="settings_storage">Stockage</string>
+    <string name="settings_about">À propos</string>
+    <string name="placeholder_body">Cette fonctionnalité arrivera dans une version ultérieure</string>
+
+    <string name="api_title">API</string>
+    <string name="api_add">Ajouter une API</string>
+    <string name="api_empty_title">Aucune API configurée</string>
+    <string name="api_empty_subtitle">Touchez le bouton ci-dessous pour choisir un fournisseur</string>
+    <string name="api_edit_add">Ajouter une API</string>
+    <string name="api_edit_edit">Modifier l\'API</string>
+    <string name="api_hint">Choisissez un fournisseur pour remplir le nom, l\'URL et le modèle. Vous pouvez les modifier.</string>
+    <string name="api_name">Nom</string>
+    <string name="api_name_hint">Nom de cette API</string>
+    <string name="api_url">URL de l\'API</string>
+    <string name="api_get_key">Obtenir une clé API</string>
+    <string name="api_key">Clé API</string>
+    <string name="api_model">Modèle</string>
+    <string name="api_paste">Coller</string>
+    <string name="api_clipboard_empty">Le presse-papiers est vide</string>
+    <string name="api_show_key">Afficher la clé</string>
+    <string name="api_hide_key">Masquer la clé</string>
+    <string name="api_choose_model">Choisir un modèle</string>
+    <string name="api_test">Tester la connexion</string>
+    <string name="api_testing">Test en cours</string>
+    <string name="api_save">Enregistrer</string>
+    <string name="api_url_required">Saisissez d\'abord l\'URL de l\'API</string>
+    <string name="api_key_required">Saisissez d\'abord la clé API</string>
+    <string name="api_delete">Supprimer cette API</string>
+    <string name="api_delete_title">Supprimer cette API ?</string>
+    <string name="api_delete_message">L\'URL et la clé ne seront pas conservées, il faudra les saisir à nouveau.</string>
+    <string name="delete">Supprimer</string>
+    <string name="cancel">Annuler</string>
+    <string name="api_unnamed">Sans nom</string>
+    <string name="api_custom">Personnalisé</string>
+
+    <string name="api_test_ok">Connecté (HTTP %1$d)</string>
+    <string name="api_test_bad_key">Échec : clé invalide (HTTP %1$d)</string>
+    <string name="api_test_bad_url">Échec : URL incorrecte (HTTP %1$d)</string>
+    <string name="api_test_failed">Échec (HTTP %1$d)</string>
+    <string name="api_test_error">Échec : %1$s</string>
+
+    <string name="language_title">Langue</string>
+    <string name="language_system">Suivre le système</string>
+    <string name="language_zh">中文</string>
+    <string name="language_en">English</string>
+    <string name="language_ru">Русский</string>
+    <string name="language_ja">日本語</string>
+    <string name="language_de">Deutsch</string>
+    <string name="language_fr">Français</string>
+    <string name="language_ko">한국어</string>
+
+    <string name="theme_title">Thème</string>
+    <string name="theme_system">Suivre le système</string>
+    <string name="theme_light">Clair</string>
+    <string name="theme_dark">Sombre</string>
+
+    <string name="storage_setup_title">Choisir un dossier de stockage</string>
+    <string name="storage_setup_desc">Les conversations, personnages, avatars, pièces jointes et réglages sont enregistrés dans le dossier choisi. Désinstaller l\'application ne supprime pas ce dossier ; après réinstallation, choisissez le même dossier pour tout retrouver.</string>
+    <string name="storage_pick">Choisir un dossier</string>
+    <string name="storage_pick_tip">Un emplacement fixe comme « Documents/AIChat » est idéal</string>
+    <string name="storage_title">Stockage</string>
+    <string name="storage_folder">Dossier</string>
+    <string name="storage_total">%1$s au total</string>
+    <string name="storage_data">Données</string>
+    <string name="storage_avatars">Avatars</string>
+    <string name="storage_attachments">Pièces jointes</string>
+    <string name="storage_sync">Synchroniser</string>
+    <string name="storage_synced">Synchronisé</string>
+    <string name="storage_change">Changer de dossier</string>
+
+    <string name="about_privacy_title">Confidentialité et données</string>
+    <string name="about_privacy_body">Je respecte la vie privée et la sécurité des données de chaque utilisateur. Tous les réglages, conversations, avatars et pièces jointes restent dans le dossier que vous avez choisi et ne sont jamais envoyés à un serveur.</string>
+
+    <string name="about_version">Version %1$s</string>
+    <string name="about_author">Auteur %1$s</string>
+    <string name="author_name">苏昕昕</string>
+
+    <string name="save">Enregistrer</string>
+    <string name="avatar_pick_failed">Impossible de lire cette image</string>
+
+    <string name="profile_title">Utilisateur</string>
+    <string name="profile_avatar_hint">Touchez l\'avatar pour le changer</string>
+    <string name="profile_name">Nom</string>
+    <string name="profile_name_hint">Votre nom</string>
+    <string name="profile_prompt">Invite</string>
+    <string name="profile_prompt_hint">Décrivez-vous pour l\'IA : parcours, préférences, ton</string>
+
+    <string name="role_sheet_title">Ajouter un personnage</string>
+    <string name="role_sheet_item_title">Créer un personnage</string>
+    <string name="role_sheet_item_subtitle">Définir un avatar, un nom et une invite</string>
+    <string name="role_edit_add">Ajouter un personnage</string>
+    <string name="role_edit_edit">Modifier le personnage</string>
+    <string name="role_name">Nom</string>
+    <string name="role_name_hint">Nom du personnage</string>
+    <string name="role_prompt">Invite</string>
+    <string name="role_prompt_hint">Qui est ce personnage et comment il parle</string>
+    <string name="role_name_required">Saisissez d\'abord un nom</string>
+    <string name="role_delete">Supprimer ce personnage</string>
+    <string name="role_delete_title">Supprimer ce personnage ?</string>
+    <string name="role_delete_message">Cette action est irréversible.</string>
+    <string name="clear_chat">Effacer l\'historique</string>
+    <string name="clear_chat_title">Effacer l\'historique ?</string>
+    <string name="clear_chat_message">Seuls les messages de ce personnage seront supprimés. Le personnage, son invite et votre profil restent.</string>
+    <string name="clear">Effacer</string>
+
+    <string name="chat_no_message">Aucun message pour l\'instant</string>
+    <string name="draft_prefix">[Brouillon]</string>
+    <string name="time_just_now">À l\'instant</string>
+    <string name="time_minutes_ago">il y a %1$d min</string>
+    <string name="time_half_hour_ago">il y a 30 min</string>
+    <string name="time_hour_ago">il y a 1 h</string>
+
+    <string name="chat_input_hint">Message</string>
+    <string name="chat_send">Envoyer</string>
+    <string name="chat_attach">Pièce jointe</string>
+    <string name="chat_attach_image">Image</string>
+    <string name="chat_attach_file">Fichier</string>
+    <string name="chat_preview_image">[Image]</string>
+    <string name="chat_preview_file">[Fichier]</string>
+    <string name="chat_role_settings">Réglages du personnage</string>
+    <string name="chat_copy">Copier</string>
+    <string name="chat_copied">Copié</string>
+    <string name="chat_edit">Modifier</string>
+    <string name="chat_edit_title">Modifier le message</string>
+    <string name="chat_edit_warning">Enregistrer supprimera les messages suivants et régénérera la réponse.</string>
+    <string name="chat_selected_count">%1$d sélectionné(s)</string>
+    <string name="chat_delete_title">Supprimer ce message ?</string>
+    <string name="chat_delete_message">Cette action est irréversible.</string>
+    <string name="chat_regenerate">Régénérer</string>
+    <string name="chat_file_pick_failed">Impossible de lire ce fichier</string>
+    <string name="chat_no_api">Ajoutez et activez d\'abord une API dans les réglages</string>
+    <string name="chat_typing">Saisie</string>
+    <string name="chat_send_failed">Échec : %1$s</string>
+    <string name="sys_user_name">Nom de l\'utilisateur : %1$s</string>
+    <string name="sys_about_user">À propos de l\'utilisateur :\n%1$s</string>
+    <string name="sys_role">Personnage :\n%1$s</string>
+
+    <string name="unsaved_title">Modifications non enregistrées</string>
+    <string name="unsaved_message">Vos modifications seront perdues si vous quittez.</string>
+    <string name="unsaved_never">Ne plus afficher</string>
+    <string name="unsaved_discard">Quitter</string>
+    <string name="unsaved_save">Enregistrer</string>
+
+    <string name="general_drop">Animation de la goutte</string>
+    <string name="general_drop_desc">Une goutte tombe sur le curseur lorsque vous touchez un champ. Désactivé : elle s\'estompe sur place.</string>
+    <string name="general_caret">Fondu du curseur</string>
+    <string name="general_caret_desc">Le curseur apparaît et disparaît en fondu au lieu de clignoter. Désactivé : clignotement système.</string>
+</resources>

@@ -22,7 +22,16 @@ private val LightColors = lightColorScheme(
     outline = Color(0xFFE3E6EA),
     outlineVariant = Color(0xFFF0F1F4),
     error = Color(0xFFD14343),
-    onError = Color.White
+    onError = Color.White,
+    // 纯白界面：弹窗、菜单等抬升表面也不再往主色偏
+    surfaceTint = Color.White,
+    surfaceBright = Color.White,
+    surfaceDim = Color(0xFFF5F6F8),
+    surfaceContainerLowest = Color.White,
+    surfaceContainerLow = Color.White,
+    surfaceContainer = Color.White,
+    surfaceContainerHigh = Color.White,
+    surfaceContainerHighest = Color.White
 )
 
 private val DarkColors = darkColorScheme(
@@ -41,7 +50,16 @@ private val DarkColors = darkColorScheme(
     outline = Color(0xFF313840),
     outlineVariant = Color(0xFF23282E),
     error = Color(0xFFFF7979),
-    onError = Color(0xFF2B0000)
+    onError = Color(0xFF2B0000),
+    // 深色下保持中性灰，不用 Material 默认的偏紫表面
+    surfaceTint = BrandBlue,
+    surfaceBright = Color(0xFF2A3038),
+    surfaceDim = Color(0xFF0B0D10),
+    surfaceContainerLowest = Color(0xFF0B0D10),
+    surfaceContainerLow = Color(0xFF121519),
+    surfaceContainer = Color(0xFF171B20),
+    surfaceContainerHigh = Color(0xFF1C2127),
+    surfaceContainerHighest = Color(0xFF222831)
 )
 
 @Composable

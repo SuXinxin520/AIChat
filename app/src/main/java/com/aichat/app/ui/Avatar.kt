@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.aichat.app.util.ImageStore
@@ -23,7 +24,8 @@ import com.aichat.app.util.ImageStore
 @Composable
 fun Avatar(path: String?, size: Dp, modifier: Modifier = Modifier) {
     val colors = MaterialTheme.colorScheme
-    val image = remember(path) { ImageStore.loadBitmap(path, (size.value * 3).toInt()) }
+    val context = LocalContext.current
+    val image = remember(path) { ImageStore.loadBitmap(context, path, (size.value * 3).toInt()) }
 
     Box(
         modifier = modifier

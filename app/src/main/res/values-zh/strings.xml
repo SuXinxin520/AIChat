@@ -15,6 +15,8 @@
     <string name="general_title">通用</string>
     <string name="general_stream">流式输出</string>
     <string name="general_stream_desc">边生成边显示；关闭后等整段生成完再逐字打出来</string>
+    <string name="general_typewriter">打字机效果</string>
+    <string name="general_typewriter_desc">回复逐字弹出；关闭后直接整段显示</string>
     <string name="settings_api">API</string>
     <string name="settings_language">语言</string>
     <string name="settings_theme">主题</string>
@@ -33,6 +35,7 @@
     <string name="api_name">名称</string>
     <string name="api_name_hint">给这条 API 起个名字</string>
     <string name="api_url">API 地址</string>
+    <string name="api_get_key">获取 API 密钥</string>
     <string name="api_key">API Key</string>
     <string name="api_model">模型</string>
     <string name="api_paste">粘贴</string>
@@ -63,11 +66,33 @@
     <string name="language_system">跟随系统</string>
     <string name="language_zh">中文</string>
     <string name="language_en">English</string>
+    <string name="language_ru">Русский</string>
+    <string name="language_ja">日本語</string>
+    <string name="language_de">Deutsch</string>
+    <string name="language_fr">Français</string>
+    <string name="language_ko">한국어</string>
 
     <string name="theme_title">主题</string>
     <string name="theme_system">跟随系统</string>
     <string name="theme_light">浅色</string>
     <string name="theme_dark">深色</string>
+
+    <string name="storage_setup_title">选择存储文件夹</string>
+    <string name="storage_setup_desc">聊天记录、角色、头像、附件和设置都会保存在你选的这个文件夹里。卸载应用不会删除它；重装后重新选中同一个文件夹，数据就全回来了。</string>
+    <string name="storage_pick">选择文件夹</string>
+    <string name="storage_pick_tip">建议选一个固定的位置，比如「文档/AIChat」</string>
+    <string name="storage_title">存储</string>
+    <string name="storage_folder">当前文件夹</string>
+    <string name="storage_total">共 %1$s</string>
+    <string name="storage_data">数据</string>
+    <string name="storage_avatars">头像</string>
+    <string name="storage_attachments">附件</string>
+    <string name="storage_sync">立即同步</string>
+    <string name="storage_synced">已同步</string>
+    <string name="storage_change">更换文件夹</string>
+
+    <string name="about_privacy_title">隐私与数据</string>
+    <string name="about_privacy_body">我尊重每一位用户的隐私和数据安全。所有设置、聊天记录、头像和附件都只保存在你自己选择的文件夹里，不会上传到任何服务器。</string>
 
     <string name="about_version">版本 %1$s</string>
     <string name="about_author">作者 %1$s</string>
@@ -116,6 +141,15 @@
     <string name="chat_preview_image">[图片]</string>
     <string name="chat_preview_file">[文件]</string>
     <string name="chat_role_settings">角色设置</string>
+    <string name="chat_copy">复制</string>
+    <string name="chat_copied">已复制</string>
+    <string name="chat_edit">修改</string>
+    <string name="chat_edit_title">修改消息</string>
+    <string name="chat_edit_warning">保存后会删除这条之后的消息，并重新生成回复。</string>
+    <string name="chat_selected_count">已选择 %1$d 条</string>
+    <string name="chat_delete_title">删除这条消息？</string>
+    <string name="chat_delete_message">删除后无法恢复。</string>
+    <string name="chat_regenerate">重新生成</string>
     <string name="chat_file_pick_failed">读取文件失败</string>
     <string name="chat_no_api">请先在设置里添加并启用一个 API</string>
     <string name="chat_typing">输入中</string>
@@ -123,4 +157,15 @@
     <string name="sys_user_name">用户名字：%1$s</string>
     <string name="sys_about_user">关于用户：\n%1$s</string>
     <string name="sys_role">角色设定：\n%1$s</string>
+
+    <string name="unsaved_title">有修改尚未保存</string>
+    <string name="unsaved_message">直接退出的话，这次的修改会丢失。</string>
+    <string name="unsaved_never">不再显示</string>
+    <string name="unsaved_discard">直接退出</string>
+    <string name="unsaved_save">保存并退出</string>
+
+    <string name="general_drop">水滴动画</string>
+    <string name="general_drop_desc">点击输入框时光标水滴下落；关闭后原地淡出</string>
+    <string name="general_caret">光标渐隐渐现</string>
+    <string name="general_caret_desc">聚焦的光标改为渐亮渐暗；关闭后恢复系统闪烁</string>
 </resources>

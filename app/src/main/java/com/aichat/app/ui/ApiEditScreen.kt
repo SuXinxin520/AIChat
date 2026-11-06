@@ -1,5 +1,8 @@
 package com.aichat.app.ui
 
+import android.content.Intent
+import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,18 +16,22 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.LocalTextSelectionColors
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.ContentPaste
+import androidx.compose.material.icons.outlined.Key
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -52,12 +59,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -69,6 +83,7 @@ import com.aichat.app.R
 import com.aichat.app.data.ApiConfig
 import com.aichat.app.data.ApiConfigStore
 import com.aichat.app.data.ApiProvider
+import com.aichat.app.data.AppPrefs
 import com.aichat.app.data.ApiProviders
 import com.aichat.app.data.ConnectionTester
 import com.aichat.app.data.TestResult
@@ -92,11 +107,56 @@ fun ApiEditScreen(configId: String?, onBack: () -> Unit) {
     var testing by remember { mutableStateOf(false) }
     var result by remember { mutableStateOf<TestResult?>(null) }
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var showUnsaved by remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     val focusManager = LocalFocusManager.current
     val clipboardManager = LocalClipboardManager.current
+
+    // 和进来时的内容对比，判断有没有改动
+    val initialName = existing?.name ?: fallback.name
+    val initialUrl = existing?.baseUrl ?: fallback.baseUrl
+    val initialKey = existing?.apiKey ?: ""
+    val initialModel = existing?.model ?: fallback.defaultModel
+    val dirty = name.trim() != initialName ||
+        baseUrl.trim() != initialUrl ||
+        apiKey.trim() != initialKey ||
+        model.trim() != initialModel
+
+    val saveApi: () -> Boolean = {
+        if (baseUrl.isBlank()) {
+            scope.launch {
+                snackbarHostState.showSnackbar(context.getString(R.string.api_url_required))
+            }
+            false
+        } else {
+            ApiConfigStore.upsert(
+                context = context,
+                config = ApiConfig(
+                    id = existing?.id ?: "",
+                    name = name.trim().ifBlank {
+                        ApiProviders.find(baseUrl)?.name ?: customName
+                    },
+                    baseUrl = baseUrl.trim(),
+                    apiKey = apiKey.trim(),
+                    model = model.trim(),
+                    enabled = existing?.enabled ?: true
+                )
+            )
+            true
+        }
+    }
+
+    val requestBack: () -> Unit = {
+        if (dirty && AppPrefs.confirmUnsaved(context)) {
+            showUnsaved = true
+        } else {
+            onBack()
+        }
+    }
+
+    BackHandler { requestBack() }
 
     Scaffold(
         containerColor = colors.background,
@@ -106,7 +166,7 @@ fun ApiEditScreen(configId: String?, onBack: () -> Unit) {
                 title = stringResource(
                     if (existing == null) R.string.api_edit_add else R.string.api_edit_edit
                 ),
-                onBack = onBack,
+                onBack = requestBack,
                 showDivider = true
             )
         }
@@ -145,6 +205,7 @@ fun ApiEditScreen(configId: String?, onBack: () -> Unit) {
             )
 
             val currentProvider = ApiProviders.find(baseUrl)
+            val keyPageUrl = currentProvider?.keyUrl.orEmpty()
 
             Spacer(Modifier.height(18.dp))
 
@@ -176,6 +237,11 @@ fun ApiEditScreen(configId: String?, onBack: () -> Unit) {
                     VisualTransformation.None
                 } else {
                     PasswordVisualTransformation()
+                },
+                leadingIcon = if (keyPageUrl.isBlank()) {
+                    null
+                } else {
+                    { ApiKeyLinkIcon(keyPageUrl) }
                 },
                 trailingIcon = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -270,28 +336,7 @@ fun ApiEditScreen(configId: String?, onBack: () -> Unit) {
 
                 Button(
                     onClick = {
-                        if (baseUrl.isBlank()) {
-                            scope.launch {
-                                snackbarHostState.showSnackbar(
-                                    context.getString(R.string.api_url_required)
-                                )
-                            }
-                        } else {
-                            ApiConfigStore.upsert(
-                                context = context,
-                                config = ApiConfig(
-                                    id = existing?.id ?: "",
-                                    name = name.trim().ifBlank {
-                                        ApiProviders.find(baseUrl)?.name ?: customName
-                                    },
-                                    baseUrl = baseUrl.trim(),
-                                    apiKey = apiKey.trim(),
-                                    model = model.trim(),
-                                    enabled = existing?.enabled ?: true
-                                )
-                            )
-                            onBack()
-                        }
+                        if (saveApi()) onBack()
                     },
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = colors.primary),
@@ -334,6 +379,20 @@ fun ApiEditScreen(configId: String?, onBack: () -> Unit) {
 
             Spacer(Modifier.height(32.dp))
         }
+    }
+
+    if (showUnsaved) {
+        UnsavedChangesDialog(
+            onDismiss = { showUnsaved = false },
+            onDiscard = {
+                showUnsaved = false
+                onBack()
+            },
+            onSave = {
+                showUnsaved = false
+                if (saveApi()) onBack()
+            }
+        )
     }
 
     if (showDeleteDialog && existing != null) {
@@ -415,46 +474,118 @@ private fun ModelField(
     var expanded by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
     val colors = MaterialTheme.colorScheme
+    val baseColors = LocalTextSelectionColors.current
+    val density = LocalDensity.current
+    val measurer = rememberTextMeasurer()
+    val measureStyle = TextStyle(fontSize = 14.sp)
+    val textPad = with(density) { 16.dp.toPx() }
+    // M3 带 label 的 OutlinedTextField 顶部多留 8sp，文字整体下移，自绘光标同步修正
+    val outlinedTopPad = with(density) { 8.sp.toPx() }
+    val cursorWidth = with(density) { 2.dp.toPx() }
+    val context = LocalContext.current
+    val fadeEnabled = AppPrefs.cursorFadeEnabled(context)
+    var tfv by remember { mutableStateOf(TextFieldValue(model)) }
+    var focused by remember { mutableStateOf(false) }
+    if (tfv.text != model) {
+        tfv = tfv.copy(
+            text = model,
+            selection = TextRange(tfv.selection.start.coerceIn(0, model.length))
+        )
+    }
 
     Box(modifier = Modifier.fillMaxWidth()) {
-        OutlinedTextField(
-            value = model,
-            onValueChange = onModelChange,
+        FallingCursorDrop(
             modifier = Modifier.fillMaxWidth(),
-            label = { Text(text = stringResource(R.string.api_model), fontSize = 13.sp) },
-            placeholder = { Text(text = "gpt-6.1-sol", fontSize = 14.sp, color = colors.onSurfaceVariant) },
-            singleLine = true,
-            shape = RoundedCornerShape(12.dp),
-            textStyle = TextStyle(fontSize = 14.sp, color = colors.onSurface),
-            trailingIcon = {
-                if (options.isNotEmpty()) {
-                    IconButton(
-                        onClick = {
-                            // 只开列表，不进入输入状态
-                            focusManager.clearFocus()
-                            expanded = true
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowDropDown,
-                            contentDescription = stringResource(R.string.api_choose_model),
-                            tint = colors.onSurfaceVariant
-                        )
-                    }
-                }
+            dropOffset = { tap, boxSize ->
+                val layout = measurer.measure(
+                    text = AnnotatedString(model),
+                    style = measureStyle,
+                    maxLines = 1,
+                    softWrap = false
+                )
+                val localX = (tap.x - textPad)
+                    .coerceIn(0f, layout.size.width.toFloat())
+                val charOffset = layout.getOffsetForPosition(
+                    Offset(localX, layout.size.height / 2f)
+                )
+                val caret = layout.getCursorRect(charOffset)
+                val caretLeft = caret.left.coerceIn(
+                    0f,
+                    (layout.size.width - cursorWidth).coerceAtLeast(0f)
+                )
+                val textTop = (boxSize.height - layout.size.height) / 2f + outlinedTopPad / 2f
+                // 水滴尖对准竖线中心
+                Offset(textPad + caretLeft + cursorWidth / 2f, textTop + caret.bottom)
             },
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = colors.onSurface,
-                unfocusedTextColor = colors.onSurface,
-                focusedContainerColor = colors.background,
-                unfocusedContainerColor = colors.background,
-                focusedBorderColor = colors.primary,
-                unfocusedBorderColor = colors.outline,
-                focusedLabelColor = colors.primary,
-                unfocusedLabelColor = colors.onSurfaceVariant,
-                cursorColor = colors.primary
+            caretProvider = caret@{ boxSize ->
+                if (!fadeEnabled || !focused || !tfv.selection.collapsed) return@caret null
+                val layout = measurer.measure(
+                    text = AnnotatedString(tfv.text),
+                    style = measureStyle,
+                    maxLines = 1,
+                    softWrap = false
+                )
+                val caret = layout.getCursorRect(tfv.selection.start)
+                val caretLeft = caret.left.coerceIn(
+                    0f,
+                    (layout.size.width - cursorWidth).coerceAtLeast(0f)
+                )
+                val textTop = (boxSize.height - layout.size.height) / 2f + outlinedTopPad / 2f
+                CaretInfo(
+                    x = textPad + caretLeft,
+                    top = textTop + caret.top,
+                    bottom = textTop + caret.bottom
+                )
+            }
+        ) { handleColor ->
+            OutlinedTextField(
+                value = tfv,
+                onValueChange = { updated ->
+                    tfv = updated
+                    if (updated.text != model) onModelChange(updated.text)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onFocusChanged { focused = it.isFocused },
+                label = { Text(text = stringResource(R.string.api_model), fontSize = 13.sp) },
+                placeholder = { Text(text = "gpt-6.1-sol", fontSize = 14.sp, color = colors.onSurfaceVariant) },
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp),
+                textStyle = TextStyle(fontSize = 14.sp, color = colors.onSurface),
+                trailingIcon = {
+                    if (options.isNotEmpty()) {
+                        IconButton(
+                            onClick = {
+                                // 只开列表，不进入输入状态
+                                focusManager.clearFocus()
+                                expanded = true
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowDropDown,
+                                contentDescription = stringResource(R.string.api_choose_model),
+                                tint = colors.onSurfaceVariant
+                            )
+                        }
+                    }
+                },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = colors.onSurface,
+                    unfocusedTextColor = colors.onSurface,
+                    focusedContainerColor = colors.background,
+                    unfocusedContainerColor = colors.background,
+                    focusedBorderColor = colors.primary,
+                    unfocusedBorderColor = colors.outline,
+                    focusedLabelColor = colors.primary,
+                    unfocusedLabelColor = colors.onSurfaceVariant,
+                    cursorColor = if (fadeEnabled) Color.Transparent else colors.primary,
+                    selectionColors = TextSelectionColors(
+                        handleColor = handleColor,
+                        backgroundColor = baseColors.backgroundColor
+                    )
+                )
             )
-        )
+        }
 
         DropdownMenu(
             expanded = expanded,
@@ -503,31 +634,142 @@ private fun ConfigField(
     placeholder: String,
     keyboardType: KeyboardType = KeyboardType.Text,
     visualTransformation: VisualTransformation = VisualTransformation.None,
-    trailingIcon: (@Composable () -> Unit)? = null
+    trailingIcon: (@Composable () -> Unit)? = null,
+    leadingIcon: (@Composable () -> Unit)? = null
 ) {
     val colors = MaterialTheme.colorScheme
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = Modifier.fillMaxWidth(),
-        label = { Text(text = label, fontSize = 13.sp) },
-        placeholder = { Text(text = placeholder, fontSize = 14.sp, color = colors.onSurfaceVariant) },
-        singleLine = true,
-        shape = RoundedCornerShape(12.dp),
-        textStyle = TextStyle(fontSize = 14.sp, color = colors.onSurface),
-        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-        visualTransformation = visualTransformation,
-        trailingIcon = trailingIcon,
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedTextColor = colors.onSurface,
-            unfocusedTextColor = colors.onSurface,
-            focusedContainerColor = colors.background,
-            unfocusedContainerColor = colors.background,
-            focusedBorderColor = colors.primary,
-            unfocusedBorderColor = colors.outline,
-            focusedLabelColor = colors.primary,
-            unfocusedLabelColor = colors.onSurfaceVariant,
-            cursorColor = colors.primary
+    val baseColors = LocalTextSelectionColors.current
+    val density = LocalDensity.current
+    val measurer = rememberTextMeasurer()
+    val measureStyle = TextStyle(fontSize = 14.sp)
+    val textPad = with(density) { 16.dp.toPx() }
+    // M3：有前置图标时，文字从图标占位(48dp)+4dp 之后开始
+    val textPadStart = with(density) { (if (leadingIcon != null) 52.dp else 16.dp).toPx() }
+    // M3 带 label 的 OutlinedTextField 顶部多留 8sp，文字整体下移，自绘光标同步修正
+    val outlinedTopPad = with(density) { 8.sp.toPx() }
+    val cursorWidth = with(density) { 2.dp.toPx() }
+    val context = LocalContext.current
+    val fadeEnabled = AppPrefs.cursorFadeEnabled(context) &&
+        visualTransformation == VisualTransformation.None
+    var tfv by remember { mutableStateOf(TextFieldValue(value)) }
+    var focused by remember { mutableStateOf(false) }
+    if (tfv.text != value) {
+        tfv = tfv.copy(
+            text = value,
+            selection = TextRange(tfv.selection.start.coerceIn(0, value.length))
         )
-    )
+    }
+    FallingCursorDrop(
+        modifier = Modifier.fillMaxWidth(),
+        dropOffset = { tap, boxSize ->
+            if (visualTransformation != VisualTransformation.None) {
+                tap
+            } else {
+                val layout = measurer.measure(
+                    text = AnnotatedString(value),
+                    style = measureStyle,
+                    maxLines = 1,
+                    softWrap = false
+                )
+                val localX = (tap.x - textPadStart)
+                    .coerceIn(0f, layout.size.width.toFloat())
+                val charOffset = layout.getOffsetForPosition(
+                    Offset(localX, layout.size.height / 2f)
+                )
+                val caret = layout.getCursorRect(charOffset)
+                val caretLeft = caret.left.coerceIn(
+                    0f,
+                    (layout.size.width - cursorWidth).coerceAtLeast(0f)
+                )
+                val textTop = (boxSize.height - layout.size.height) / 2f + outlinedTopPad / 2f
+                // 水滴尖对准竖线中心
+                Offset(textPadStart + caretLeft + cursorWidth / 2f, textTop + caret.bottom)
+            }
+        },
+        caretProvider = caret@{ boxSize ->
+            if (!fadeEnabled || !focused || !tfv.selection.collapsed) return@caret null
+            val layout = measurer.measure(
+                text = AnnotatedString(tfv.text),
+                style = measureStyle,
+                maxLines = 1,
+                softWrap = false
+            )
+            val caret = layout.getCursorRect(tfv.selection.start)
+            val caretLeft = caret.left.coerceIn(
+                0f,
+                (layout.size.width - cursorWidth).coerceAtLeast(0f)
+            )
+            val textTop = (boxSize.height - layout.size.height) / 2f + outlinedTopPad / 2f
+            CaretInfo(
+                x = textPadStart + caretLeft,
+                top = textTop + caret.top,
+                bottom = textTop + caret.bottom
+            )
+        }
+    ) { handleColor ->
+        OutlinedTextField(
+            value = tfv,
+            onValueChange = { updated ->
+                tfv = updated
+                if (updated.text != value) onValueChange(updated.text)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .onFocusChanged { focused = it.isFocused },
+            label = { Text(text = label, fontSize = 13.sp) },
+            placeholder = { Text(text = placeholder, fontSize = 14.sp, color = colors.onSurfaceVariant) },
+            singleLine = true,
+            shape = RoundedCornerShape(12.dp),
+            textStyle = TextStyle(fontSize = 14.sp, color = colors.onSurface),
+            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+            visualTransformation = visualTransformation,
+            leadingIcon = leadingIcon,
+            trailingIcon = trailingIcon,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = colors.onSurface,
+                unfocusedTextColor = colors.onSurface,
+                focusedContainerColor = colors.background,
+                unfocusedContainerColor = colors.background,
+                focusedBorderColor = colors.primary,
+                unfocusedBorderColor = colors.outline,
+                focusedLabelColor = colors.primary,
+                unfocusedLabelColor = colors.onSurfaceVariant,
+                cursorColor = if (fadeEnabled) Color.Transparent else colors.primary,
+                selectionColors = TextSelectionColors(
+                    handleColor = handleColor,
+                    backgroundColor = baseColors.backgroundColor
+                )
+            )
+        )
+    }
+}
+
+/** API Key 左侧的快捷入口：跳到服务商开放平台的密钥管理页。 */
+@Composable
+private fun ApiKeyLinkIcon(url: String) {
+    val colors = MaterialTheme.colorScheme
+    val context = LocalContext.current
+    Box(
+        modifier = Modifier.size(48.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        IconButton(
+            onClick = {
+                runCatching {
+                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                }
+            },
+            modifier = Modifier
+                .size(40.dp)
+                // 图标往文字方向靠一点，缩小右侧空白
+                .offset(x = 7.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Key,
+                contentDescription = stringResource(R.string.api_get_key),
+                tint = colors.onSurfaceVariant,
+                modifier = Modifier.size(22.dp)
+            )
+        }
+    }
 }

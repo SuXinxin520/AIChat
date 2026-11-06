@@ -3,6 +3,8 @@ package com.aichat.app.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -28,7 +30,12 @@ fun LanguageScreen(onBack: () -> Unit) {
     val options = listOf(
         AppPrefs.LANGUAGE_SYSTEM to stringResource(R.string.language_system),
         "zh" to stringResource(R.string.language_zh),
-        "en" to stringResource(R.string.language_en)
+        "en" to stringResource(R.string.language_en),
+        "ru" to stringResource(R.string.language_ru),
+        "ja" to stringResource(R.string.language_ja),
+        "de" to stringResource(R.string.language_de),
+        "fr" to stringResource(R.string.language_fr),
+        "ko" to stringResource(R.string.language_ko)
     )
 
     Scaffold(
@@ -45,6 +52,7 @@ fun LanguageScreen(onBack: () -> Unit) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
         ) {
             options.forEachIndexed { index, (value, label) ->
                 ChoiceRow(

@@ -15,6 +15,7 @@ sealed interface Screen {
     data class ApiEdit(val id: String?) : Screen
     data object Language : Screen
     data object Theme : Screen
+    data object Storage : Screen
     data object About : Screen
     data class RoleEdit(val id: String?) : Screen
     data class Chat(val roleId: String) : Screen
@@ -69,6 +70,8 @@ fun AppRoot(themeMode: String, onThemeChange: (String) -> Unit) {
             onSelect = onThemeChange,
             onBack = pop
         )
+
+        Screen.Storage -> StorageScreen(onBack = pop)
 
         Screen.About -> AboutScreen(onBack = pop)
 

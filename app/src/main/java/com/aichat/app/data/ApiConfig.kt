@@ -19,7 +19,9 @@ data class ApiConfig(
 data class ApiProvider(
     val name: String,
     val baseUrl: String,
-    val models: List<String>
+    val models: List<String>,
+    /** 开放平台里创建/查看 API Key 的页面。 */
+    val keyUrl: String = ""
 ) {
     val defaultModel: String get() = models.first()
 }
@@ -29,32 +31,49 @@ object ApiProviders {
         ApiProvider(
             name = "OpenAI",
             baseUrl = "https://api.openai.com/v1",
-            models = listOf("gpt-6.1-sol", "gpt-6-astra", "gpt-6-luna")
+            models = listOf("gpt-6.1-sol", "gpt-6-astra", "gpt-6-luna"),
+            keyUrl = "https://platform.openai.com/api-keys"
         ),
         ApiProvider(
             name = "Claude",
             baseUrl = "https://api.anthropic.com/v1",
-            models = listOf("claude-sonnet-5-5", "claude-opus-5-5", "claude-haiku-5-5")
+            models = listOf("claude-sonnet-5-5", "claude-opus-5-5", "claude-haiku-5-5"),
+            keyUrl = "https://console.anthropic.com/settings/keys"
         ),
         ApiProvider(
             name = "DeepSeek",
             baseUrl = "https://api.deepseek.com",
-            models = listOf("deepseek-flash", "deepseek-v4-pro")
+            models = listOf("deepseek-flash", "deepseek-v4-pro"),
+            keyUrl = "https://platform.deepseek.com/api_keys"
+        ),
+        ApiProvider(
+            name = "火山引擎",
+            baseUrl = "https://ark.cn-beijing.volces.com/api/v3",
+            models = listOf(
+                "doubao-seed-2-1-pro-260915",
+                "doubao-seed-2-1-lite-260915",
+                "doubao-seed-2-1-turbo-260628",
+                "doubao-seed-evolving"
+            ),
+            keyUrl = "https://console.volcengine.com/ark/region:ark+cn-beijing/apiKey"
         ),
         ApiProvider(
             name = "Gemini",
             baseUrl = "https://generativelanguage.googleapis.com/v1beta/openai",
-            models = listOf("gemini-3.8-flash", "gemini-3-flash")
+            models = listOf("gemini-3.8-flash", "gemini-3-flash"),
+            keyUrl = "https://aistudio.google.com/app/apikey"
         ),
         ApiProvider(
             name = "Qwen",
             baseUrl = "https://dashscope.aliyuncs.com/compatible-mode/v1",
-            models = listOf("qwen-plus", "qwen-max")
+            models = listOf("qwen-plus", "qwen-max"),
+            keyUrl = "https://bailian.console.aliyun.com/?apiKey=1"
         ),
         ApiProvider(
             name = "Kimi",
             baseUrl = "https://api.moonshot.cn/v1",
-            models = listOf("kimi-k3", "kimi-k2.7-code", "kimi-k2.6")
+            models = listOf("kimi-k3", "kimi-k2.7-code", "kimi-k2.6"),
+            keyUrl = "https://platform.moonshot.cn/console/api-keys"
         )
     )
 

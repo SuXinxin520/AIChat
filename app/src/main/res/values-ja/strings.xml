@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AIChat</string>
+    <string name="back">戻る</string>
+
+    <string name="home_user">ユーザー</string>
+    <string name="home_avatar">アバター</string>
+    <string name="settings">設定</string>
+    <string name="home_new_chat">新しいチャット</string>
+    <string name="home_new_chat_soon">新しいチャットは次のバージョンで提供予定です</string>
+    <string name="home_empty_title">まだキャラクターがいません</string>
+    <string name="home_empty_subtitle">右下の + から追加できます</string>
+
+    <string name="settings_general">一般</string>
+    <string name="general_title">一般</string>
+    <string name="general_stream">ストリーミング</string>
+    <string name="general_stream_desc">生成されながら表示します。オフにすると全文の生成後に表示します。</string>
+    <string name="general_typewriter">タイプライター効果</string>
+    <string name="general_typewriter_desc">返信を一文字ずつ表示します。オフにするとまとめて表示します。</string>
+    <string name="settings_api">API</string>
+    <string name="settings_language">言語</string>
+    <string name="settings_theme">テーマ</string>
+    <string name="settings_permissions">権限</string>
+    <string name="settings_storage">ストレージ</string>
+    <string name="settings_about">このアプリについて</string>
+    <string name="placeholder_body">この機能は今後のバージョンで提供予定です</string>
+
+    <string name="api_title">API</string>
+    <string name="api_add">API を追加</string>
+    <string name="api_empty_title">API が設定されていません</string>
+    <string name="api_empty_subtitle">下のボタンからサービスを選択してください</string>
+    <string name="api_edit_add">API を追加</string>
+    <string name="api_edit_edit">API を編集</string>
+    <string name="api_hint">サービスを選ぶと名前・URL・モデルが自動入力されます。手動で変更もできます。</string>
+    <string name="api_name">名前</string>
+    <string name="api_name_hint">この API の名前</string>
+    <string name="api_url">API URL</string>
+    <string name="api_get_key">API キーを取得</string>
+    <string name="api_key">API Key</string>
+    <string name="api_model">モデル</string>
+    <string name="api_paste">貼り付け</string>
+    <string name="api_clipboard_empty">クリップボードが空です</string>
+    <string name="api_show_key">キーを表示</string>
+    <string name="api_hide_key">キーを隠す</string>
+    <string name="api_choose_model">モデルを選択</string>
+    <string name="api_test">接続テスト</string>
+    <string name="api_testing">テスト中</string>
+    <string name="api_save">保存</string>
+    <string name="api_url_required">先に API URL を入力してください</string>
+    <string name="api_key_required">先に API Key を入力してください</string>
+    <string name="api_delete">この API を削除</string>
+    <string name="api_delete_title">この API を削除しますか？</string>
+    <string name="api_delete_message">URL とキーは保存されません。再度入力が必要です。</string>
+    <string name="delete">削除</string>
+    <string name="cancel">キャンセル</string>
+    <string name="api_unnamed">名称未設定</string>
+    <string name="api_custom">カスタム</string>
+
+    <string name="api_test_ok">接続成功（HTTP %1$d）</string>
+    <string name="api_test_bad_key">失敗：キーが無効です（HTTP %1$d）</string>
+    <string name="api_test_bad_url">失敗：URL が違います（HTTP %1$d）</string>
+    <string name="api_test_failed">失敗（HTTP %1$d）</string>
+    <string name="api_test_error">失敗：%1$s</string>
+
+    <string name="language_title">言語</string>
+    <string name="language_system">システムに従う</string>
+    <string name="language_zh">中文</string>
+    <string name="language_en">English</string>
+    <string name="language_ru">Русский</string>
+    <string name="language_ja">日本語</string>
+    <string name="language_de">Deutsch</string>
+    <string name="language_fr">Français</string>
+    <string name="language_ko">한국어</string>
+
+    <string name="theme_title">テーマ</string>
+    <string name="theme_system">システムに従う</string>
+    <string name="theme_light">ライト</string>
+    <string name="theme_dark">ダーク</string>
+
+    <string name="storage_setup_title">保存フォルダを選択</string>
+    <string name="storage_setup_desc">チャット、キャラクター、アバター、添付ファイル、設定はすべて選択したフォルダに保存されます。アプリを削除してもフォルダは残り、再インストール後に同じフォルダを選べばデータが復元されます。</string>
+    <string name="storage_pick">フォルダを選択</string>
+    <string name="storage_pick_tip">「Documents/AIChat」など固定の場所がおすすめです</string>
+    <string name="storage_title">ストレージ</string>
+    <string name="storage_folder">フォルダ</string>
+    <string name="storage_total">合計 %1$s</string>
+    <string name="storage_data">データ</string>
+    <string name="storage_avatars">アバター</string>
+    <string name="storage_attachments">添付ファイル</string>
+    <string name="storage_sync">今すぐ同期</string>
+    <string name="storage_synced">同期しました</string>
+    <string name="storage_change">フォルダを変更</string>
+
+    <string name="about_privacy_title">プライバシーとデータ</string>
+    <string name="about_privacy_body">すべてのユーザーのプライバシーとデータの安全を尊重します。設定、チャット、アバター、添付ファイルは選択したフォルダにのみ保存され、外部サーバーには送信されません。</string>
+
+    <string name="about_version">バージョン %1$s</string>
+    <string name="about_author">作者 %1$s</string>
+    <string name="author_name">苏昕昕</string>
+
+    <string name="save">保存</string>
+    <string name="avatar_pick_failed">画像を読み込めませんでした</string>
+
+    <string name="profile_title">ユーザー</string>
+    <string name="profile_avatar_hint">アバターをタップして変更</string>
+    <string name="profile_name">名前</string>
+    <string name="profile_name_hint">あなたの名前</string>
+    <string name="profile_prompt">プロンプト</string>
+    <string name="profile_prompt_hint">あなたについて AI に伝える：経歴、好み、話し方</string>
+
+    <string name="role_sheet_title">キャラクター追加</string>
+    <string name="role_sheet_item_title">新しいキャラクター</string>
+    <string name="role_sheet_item_subtitle">アバター、名前、プロンプトを設定</string>
+    <string name="role_edit_add">キャラクター追加</string>
+    <string name="role_edit_edit">キャラクター編集</string>
+    <string name="role_name">名前</string>
+    <string name="role_name_hint">キャラクター名</string>
+    <string name="role_prompt">プロンプト</string>
+    <string name="role_prompt_hint">キャラクターの設定と話し方</string>
+    <string name="role_name_required">先に名前を入力してください</string>
+    <string name="role_delete">このキャラクターを削除</string>
+    <string name="role_delete_title">このキャラクターを削除しますか？</string>
+    <string name="role_delete_message">削除すると元に戻せません。</string>
+    <string name="clear_chat">チャット履歴を消去</string>
+    <string name="clear_chat_title">チャット履歴を消去しますか？</string>
+    <string name="clear_chat_message">このキャラクターのメッセージのみ削除されます。キャラクター本体、プロンプト、あなたのプロフィールは残ります。</string>
+    <string name="clear">消去</string>
+
+    <string name="chat_no_message">まだメッセージがありません</string>
+    <string name="draft_prefix">[下書き]</string>
+    <string name="time_just_now">たった今</string>
+    <string name="time_minutes_ago">%1$d 分前</string>
+    <string name="time_half_hour_ago">30 分前</string>
+    <string name="time_hour_ago">1 時間前</string>
+
+    <string name="chat_input_hint">メッセージ</string>
+    <string name="chat_send">送信</string>
+    <string name="chat_attach">添付</string>
+    <string name="chat_attach_image">画像</string>
+    <string name="chat_attach_file">ファイル</string>
+    <string name="chat_preview_image">[画像]</string>
+    <string name="chat_preview_file">[ファイル]</string>
+    <string name="chat_role_settings">キャラクター設定</string>
+    <string name="chat_copy">コピー</string>
+    <string name="chat_copied">コピーしました</string>
+    <string name="chat_edit">編集</string>
+    <string name="chat_edit_title">メッセージを編集</string>
+    <string name="chat_edit_warning">保存すると、この後のメッセージは削除され、返信が再生成されます。</string>
+    <string name="chat_selected_count">%1$d 件選択中</string>
+    <string name="chat_delete_title">このメッセージを削除しますか？</string>
+    <string name="chat_delete_message">削除すると元に戻せません。</string>
+    <string name="chat_regenerate">再生成</string>
+    <string name="chat_file_pick_failed">ファイルを読み込めませんでした</string>
+    <string name="chat_no_api">先に設定で API を追加して有効にしてください</string>
+    <string name="chat_typing">入力中</string>
+    <string name="chat_send_failed">失敗：%1$s</string>
+    <string name="sys_user_name">ユーザー名：%1$s</string>
+    <string name="sys_about_user">ユーザーについて：\n%1$s</string>
+    <string name="sys_role">キャラクター設定：\n%1$s</string>
+
+    <string name="unsaved_title">変更が保存されていません</string>
+    <string name="unsaved_message">保存せずに戻ると、今回の変更は失われます。</string>
+    <string name="unsaved_never">今後表示しない</string>
+    <string name="unsaved_discard">戻る</string>
+    <string name="unsaved_save">保存して戻る</string>
+
+    <string name="general_drop">しずくアニメーション</string>
+    <string name="general_drop_desc">入力欄をタップするとカーソルにしずくが落ちます。オフにするとその場でフェードアウトします。</string>
+    <string name="general_caret">カーソルのフェード</string>
+    <string name="general_caret_desc">カーソルを点滅ではなくゆっくり明滅させます。オフにするとシステムの点滅に戻ります。</string>
+</resources>

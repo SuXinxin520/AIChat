@@ -15,6 +15,8 @@
     <string name="general_title">General</string>
     <string name="general_stream">Streaming</string>
     <string name="general_stream_desc">Show text as it is generated. Turn off to wait for the whole reply, then type it out.</string>
+    <string name="general_typewriter">Typewriter effect</string>
+    <string name="general_typewriter_desc">Reveal replies character by character. Turn off to show them all at once.</string>
     <string name="settings_api">API</string>
     <string name="settings_language">Language</string>
     <string name="settings_theme">Theme</string>
@@ -33,6 +35,7 @@
     <string name="api_name">Name</string>
     <string name="api_name_hint">Name this API</string>
     <string name="api_url">API URL</string>
+    <string name="api_get_key">Get API key</string>
     <string name="api_key">API Key</string>
     <string name="api_model">Model</string>
     <string name="api_paste">Paste</string>
@@ -63,11 +66,33 @@
     <string name="language_system">Follow system</string>
     <string name="language_zh">中文</string>
     <string name="language_en">English</string>
+    <string name="language_ru">Русский</string>
+    <string name="language_ja">日本語</string>
+    <string name="language_de">Deutsch</string>
+    <string name="language_fr">Français</string>
+    <string name="language_ko">한국어</string>
 
     <string name="theme_title">Theme</string>
     <string name="theme_system">Follow system</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
+
+    <string name="storage_setup_title">Choose a storage folder</string>
+    <string name="storage_setup_desc">Chats, characters, avatars, attachments and settings are all stored in the folder you pick. Uninstalling the app will not delete it; after reinstalling, pick the same folder to get everything back.</string>
+    <string name="storage_pick">Choose folder</string>
+    <string name="storage_pick_tip">A fixed location such as Documents/AIChat works best</string>
+    <string name="storage_title">Storage</string>
+    <string name="storage_folder">Folder</string>
+    <string name="storage_total">%1$s in total</string>
+    <string name="storage_data">Data</string>
+    <string name="storage_avatars">Avatars</string>
+    <string name="storage_attachments">Attachments</string>
+    <string name="storage_sync">Sync now</string>
+    <string name="storage_synced">Synced</string>
+    <string name="storage_change">Change folder</string>
+
+    <string name="about_privacy_title">Privacy and data</string>
+    <string name="about_privacy_body">I respect every user\'s privacy and data safety. All settings, chats, avatars and attachments stay in the folder you chose and are never uploaded to any server.</string>
 
     <string name="about_version">Version %1$s</string>
     <string name="about_author">Author %1$s</string>
@@ -116,6 +141,15 @@
     <string name="chat_preview_image">[Image]</string>
     <string name="chat_preview_file">[File]</string>
     <string name="chat_role_settings">Character settings</string>
+    <string name="chat_copy">Copy</string>
+    <string name="chat_copied">Copied</string>
+    <string name="chat_edit">Edit</string>
+    <string name="chat_edit_title">Edit message</string>
+    <string name="chat_edit_warning">Saving will remove all messages after this one and regenerate the reply.</string>
+    <string name="chat_selected_count">%1$d selected</string>
+    <string name="chat_delete_title">Delete this message?</string>
+    <string name="chat_delete_message">This cannot be undone.</string>
+    <string name="chat_regenerate">Regenerate</string>
     <string name="chat_file_pick_failed">Could not read that file</string>
     <string name="chat_no_api">Add and enable an API in settings first</string>
     <string name="chat_typing">Typing</string>
@@ -123,4 +157,15 @@
     <string name="sys_user_name">User name: %1$s</string>
     <string name="sys_about_user">About the user:\n%1$s</string>
     <string name="sys_role">Character:\n%1$s</string>
+
+    <string name="unsaved_title">Unsaved changes</string>
+    <string name="unsaved_message">Your changes will be lost if you leave without saving.</string>
+    <string name="unsaved_never">Don\'t ask again</string>
+    <string name="unsaved_discard">Leave</string>
+    <string name="unsaved_save">Save &amp; exit</string>
+
+    <string name="general_drop">Drop animation</string>
+    <string name="general_drop_desc">A drop falls onto the caret when you tap a field. Turn off to fade it out in place.</string>
+    <string name="general_caret">Cursor fade</string>
+    <string name="general_caret_desc">The caret fades in and out instead of blinking. Turn off to use the system blink.</string>
 </resources>
