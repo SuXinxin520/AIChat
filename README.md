@@ -1,6 +1,11 @@
 <div align="center">
 
-# 爱聊 AIChat
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/title-zh-dark.png">
+    <img src="assets/title-zh-light.png" alt="爱聊 AIChat" height="72">
+  </picture>
+</p>
 
 AI Chat Reimagined // 和你的 AI 角色聊天
 

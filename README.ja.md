@@ -1,6 +1,11 @@
 <div align="center">
 
-# AIChat
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/title-dark.png">
+    <img src="assets/title-light.png" alt="AIChat" height="72">
+  </picture>
+</p>
 
 AI Chat Reimagined // AIキャラクターとチャット
 
