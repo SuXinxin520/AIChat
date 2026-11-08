@@ -9,7 +9,9 @@ import java.util.UUID
 data class UserProfile(
     val name: String = "",
     val prompt: String = "",
-    val avatarPath: String? = null
+    val avatarPath: String? = null,
+    /** 提示词库里选中的条目；prompt 保留为拼好的快照/旧数据。 */
+    val promptIds: List<String> = emptyList()
 )
 
 /** 角色。lastMessage / lastMessageAt 留给后续的对话功能写入。 */
@@ -20,8 +22,17 @@ data class Role(
     val avatarPath: String? = null,
     val lastMessage: String = "",
     val lastMessageAt: Long = 0L,
-    val createdAt: Long = 0L
+    val createdAt: Long = 0L,
+    /** 提示词库里选中的条目；prompt 保留为拼好的快照/旧数据。 */
+    val promptIds: List<String> = emptyList()
 )
+
+private fun JSONObject.optStringList(name: String): List<String> {
+    val array = optJSONArray(name) ?: return emptyList()
+    return (0 until array.length()).mapNotNull { index ->
+        array.optString(index).takeIf { it.isNotBlank() }
+    }
+}
 
 object ProfileStore {
 
@@ -39,7 +50,8 @@ object ProfileStore {
             UserProfile(
                 name = item.optString("name"),
                 prompt = item.optString("prompt"),
-                avatarPath = item.optString("avatarPath").takeIf { it.isNotBlank() }
+                avatarPath = item.optString("avatarPath").takeIf { it.isNotBlank() },
+                promptIds = item.optStringList("promptIds")
             )
         }.getOrDefault(UserProfile())
     }
@@ -49,6 +61,7 @@ object ProfileStore {
             put("name", profile.name)
             put("prompt", profile.prompt)
             put("avatarPath", profile.avatarPath ?: "")
+            put("promptIds", JSONArray().apply { profile.promptIds.forEach { put(it) } })
         }
         prefs(context).edit().putString(KEY_USER, item.toString()).apply()
     }
@@ -66,7 +79,8 @@ object ProfileStore {
                     avatarPath = item.optString("avatarPath").takeIf { it.isNotBlank() },
                     lastMessage = item.optString("lastMessage"),
                     lastMessageAt = item.optLong("lastMessageAt", 0L),
-                    createdAt = item.optLong("createdAt", 0L)
+                    createdAt = item.optLong("createdAt", 0L),
+                    promptIds = item.optStringList("promptIds")
                 )
             }
         }.getOrDefault(emptyList())
@@ -84,6 +98,7 @@ object ProfileStore {
                     put("lastMessage", role.lastMessage)
                     put("lastMessageAt", role.lastMessageAt)
                     put("createdAt", role.createdAt)
+                    put("promptIds", JSONArray().apply { role.promptIds.forEach { put(it) } })
                 }
             )
         }

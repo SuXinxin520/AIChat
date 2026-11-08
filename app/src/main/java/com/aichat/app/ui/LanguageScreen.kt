@@ -44,7 +44,6 @@ fun LanguageScreen(onBack: () -> Unit) {
             SubPageTopBar(
                 title = stringResource(R.string.language_title),
                 onBack = onBack,
-                showDivider = true
             )
         }
     ) { innerPadding ->

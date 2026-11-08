@@ -30,7 +30,7 @@ fun PlaceholderScreen(title: String, body: String, onBack: () -> Unit) {
 
     Scaffold(
         containerColor = colors.background,
-        topBar = { SubPageTopBar(title = title, onBack = onBack, showDivider = true) }
+        topBar = { SubPageTopBar(title = title, onBack = onBack) }
     ) { innerPadding ->
         Column(
             modifier = Modifier

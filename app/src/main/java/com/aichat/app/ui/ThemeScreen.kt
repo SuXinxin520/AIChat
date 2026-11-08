@@ -29,7 +29,6 @@ fun ThemeScreen(current: String, onSelect: (String) -> Unit, onBack: () -> Unit)
             SubPageTopBar(
                 title = stringResource(R.string.theme_title),
                 onBack = onBack,
-                showDivider = true
             )
         }
     ) { innerPadding ->

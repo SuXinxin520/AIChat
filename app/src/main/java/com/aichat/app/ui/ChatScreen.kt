@@ -3,13 +3,18 @@ package com.aichat.app.ui
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -32,6 +37,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.size
@@ -42,6 +48,8 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -53,12 +61,16 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.outlined.AttachFile
 import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.outlined.Psychology
 import androidx.compose.material.icons.outlined.ContentCopy
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.InsertDriveFile
+import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.AlertDialog
@@ -75,6 +87,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -90,18 +103,29 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathOperation
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.graphicsLayer
@@ -112,35 +136,65 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aichat.app.R
+import com.aichat.app.data.ApiConfig
 import com.aichat.app.data.ApiConfigStore
 import com.aichat.app.data.AppPrefs
 import com.aichat.app.data.ChatApi
+import com.aichat.app.data.ChatAvatar
+import com.aichat.app.data.ChatAvatarContext
 import com.aichat.app.data.ChatMessage
+import com.aichat.app.data.ChatStreamEvent
+import com.aichat.app.data.ChatSummary
 import com.aichat.app.data.DraftStore
 import com.aichat.app.data.MessageStore
+import com.aichat.app.data.ModelTokenizer
 import com.aichat.app.data.ProfileStore
+import com.aichat.app.data.PromptLibraryStore
 import com.aichat.app.data.Role
+import com.aichat.app.data.RoleChatSettings
+import com.aichat.app.data.RoleChatSettingsStore
 import com.aichat.app.data.Storage
+import com.aichat.app.data.SummaryStore
+import com.aichat.app.data.UsageStore
+import com.aichat.app.data.ApiUsage
 import com.aichat.app.util.ImageStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.math.roundToInt
+
+private const val SUMMARY_RESERVE = 2_500
+private const val TRIM_RESERVE = 500
+private const val SUMMARY_SYSTEM_PROMPT =
+    "You are a context compressor for a long role-play chat. Merge the previous summary " +
+        "(if any) and the new old messages into one concise summary. Keep character names, " +
+        "user persona details, important events, relationship changes, unresolved threads, " +
+        "and tone/format rules. Do not invent facts. Write the summary in the same language " +
+        "as the conversation. Aim for 200-400 words."
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -151,6 +205,26 @@ fun ChatScreen(
 ) {
     val colors = MaterialTheme.colorScheme
     val context = LocalContext.current
+    val rootView = LocalView.current
+    val keepAwakeMode = AppPrefs.chatKeepAwake(context)
+    var keepAwakeTick by remember { mutableIntStateOf(0) }
+
+    // 聊天页常亮：always 一直保持；数字模式在无操作 N 分钟后允许系统息屏
+    LaunchedEffect(keepAwakeMode, keepAwakeTick) {
+        if (keepAwakeMode == AppPrefs.KEEP_AWAKE_SYSTEM) {
+            rootView.keepScreenOn = false
+            return@LaunchedEffect
+        }
+        rootView.keepScreenOn = true
+        if (keepAwakeMode != AppPrefs.KEEP_AWAKE_ALWAYS) {
+            val minutes = keepAwakeMode.toIntOrNull() ?: 5
+            delay(minutes.coerceAtLeast(1) * 60_000L)
+            rootView.keepScreenOn = false
+        }
+    }
+    DisposableEffect(Unit) {
+        onDispose { rootView.keepScreenOn = false }
+    }
 
     val loadedRole = remember(roleId) {
         ProfileStore.loadRoles(context).firstOrNull { it.id == roleId }
@@ -166,7 +240,28 @@ fun ChatScreen(
     var input by rememberSaveable {
         mutableStateOf(DraftStore.load(context, roleId)?.text.orEmpty())
     }
+    var summary by remember(roleId) { mutableStateOf(SummaryStore.load(context, roleId)) }
+    var lastUsage by remember(roleId) { mutableStateOf(UsageStore.load(context, roleId)) }
+    var roleChatSettings by remember(roleId) {
+        mutableStateOf(RoleChatSettingsStore.load(context, roleId))
+    }
+    var summarizing by remember { mutableStateOf(false) }
+    var searching by remember { mutableStateOf(false) }
+    var summaryExpanded by remember { mutableStateOf(false) }
     var showAttachSheet by remember { mutableStateOf(false) }
+    // 长按思考图标时的强度浮层：放在页面根部，避免 Popup 打断拖动手势
+    val thinkingPicker = remember { ThinkingPickerState() }
+    // 用量气泡也放在页面根部，方便精确按圆心定位
+    val usagePopup = remember { UsagePopupState() }
+    var manualCompressing by remember { mutableStateOf(false) }
+
+    LaunchedEffect(usagePopup.visible) {
+        if (usagePopup.visible) {
+            delay(3000)
+            usagePopup.visible = false
+        }
+    }
+    BackHandler(enabled = usagePopup.visible) { usagePopup.visible = false }
 
     // 输入停顿后存草稿，离开页面时再兜一次
     LaunchedEffect(input) {
@@ -200,10 +295,16 @@ fun ChatScreen(
     var selectionReset by remember { mutableIntStateOf(0) }
     // 当前是否有长按选中的文字（用于把返回键先用于取消选择）
     var textSelectionActive by remember { mutableStateOf(false) }
+    // 输入栏在窗口里的位置：点它以外的地方都应该收起键盘
+    var inputBarBounds by remember { mutableStateOf(Rect.Zero) }
+    var scaffoldRootOffset by remember { mutableStateOf(Offset.Zero) }
 
     var sending by remember { mutableStateOf(false) }
     // streamingText 是已收到的全文，shownChars 是已经"打"出来的字数
     var streamingText by remember { mutableStateOf("") }
+    var streamingReasoning by remember { mutableStateOf("") }
+    var reasoningStartedAt by remember { mutableStateOf(0L) }
+    var reasoningEndedAt by remember { mutableStateOf(0L) }
     var shownChars by remember { mutableIntStateOf(0) }
 
     val typewriterEnabled = AppPrefs.typewriterEnabled(context)
@@ -227,24 +328,130 @@ fun ChatScreen(
 
     // 用户资料与角色设定拼成系统提示
     val profile = remember { ProfileStore.loadUser(context) }
+    val promptLibrary = remember { PromptLibraryStore.load(context) }
+    val userPrompt = if (profile.promptIds.isEmpty()) {
+        profile.prompt.trim()
+    } else {
+        promptLibrary.composePrompt(profile.promptIds)
+    }
+    val rolePrompt = if (role.promptIds.isEmpty()) {
+        role.prompt.trim()
+    } else {
+        promptLibrary.composePrompt(role.promptIds)
+    }
     val userNameLine = if (profile.name.isNotBlank()) {
         stringResource(R.string.sys_user_name, profile.name)
     } else {
         ""
     }
-    val userAboutLine = if (profile.prompt.isNotBlank()) {
-        stringResource(R.string.sys_about_user, profile.prompt)
+    val userAboutLine = if (userPrompt.isNotBlank()) {
+        stringResource(R.string.sys_about_user, userPrompt)
     } else {
         ""
     }
-    val roleLine = if (role.prompt.isNotBlank()) {
-        stringResource(R.string.sys_role, role.prompt)
+    val roleNameLine = if (role.name.isNotBlank()) {
+        stringResource(R.string.sys_role_name, role.name)
     } else {
         ""
     }
-    val systemPrompt = listOf(userNameLine, userAboutLine, roleLine)
+    val roleLine = if (rolePrompt.isNotBlank()) {
+        stringResource(R.string.sys_role, rolePrompt)
+    } else {
+        ""
+    }
+    val systemPrompt = listOf(userNameLine, userAboutLine, roleNameLine, roleLine)
         .filter { it.isNotBlank() }
         .joinToString("\n\n")
+
+    var activeConfig by remember {
+        mutableStateOf(ApiConfigStore.loadAll(context).firstOrNull { it.enabled })
+    }
+    val isDeepSeek = activeConfig?.let { config ->
+        config.baseUrl.contains("deepseek", ignoreCase = true) ||
+            config.model.startsWith("deepseek", ignoreCase = true)
+    } == true
+    val canWebSearch = activeConfig?.baseUrl
+        ?.contains("api.deepseek.com", ignoreCase = true) == true
+    val contextLimit = activeConfig?.contextLimit ?: ApiConfig.DEFAULT_CONTEXT_LIMIT
+    val tokenModel = activeConfig?.model.orEmpty()
+    // 角色/用户头像作为隐形的 user 消息随请求发送，只给支持视觉的模型
+    val avatarContext = remember(
+        role.id,
+        role.name,
+        role.avatarPath,
+        profile.name,
+        profile.avatarPath,
+        tokenModel
+    ) {
+        if (tokenModel.isBlank() || !ChatApi.supportsVision(tokenModel)) {
+            null
+        } else {
+            val images = buildList {
+                role.avatarPath?.takeIf { it.isNotBlank() }?.let { path ->
+                    add(
+                        ChatAvatar(
+                            context.getString(R.string.sys_avatar_role, role.name),
+                            path
+                        )
+                    )
+                }
+                profile.avatarPath?.takeIf { it.isNotBlank() }?.let { path ->
+                    add(
+                        ChatAvatar(
+                            context.getString(R.string.sys_avatar_user, profile.name),
+                            path
+                        )
+                    )
+                }
+            }
+            if (images.isEmpty()) {
+                null
+            } else {
+                ChatAvatarContext(
+                    intro = context.getString(R.string.sys_avatar_intro),
+                    images = images
+                )
+            }
+        }
+    }
+    val avatarTokens = remember(avatarContext, tokenModel) {
+        if (tokenModel.isBlank() || avatarContext == null) {
+            0
+        } else {
+            val labels = avatarContext.intro +
+                avatarContext.images.joinToString("") { it.label }
+            avatarContext.images.size * ModelTokenizer.imageTokens(tokenModel, 1) +
+                ModelTokenizer.count(labels, tokenModel)
+        }
+    }
+    val coveredIds = summary?.coveredIds?.toSet().orEmpty()
+    val pendingMessages = messages.filter { it.id !in coveredIds }
+    val systemTokens = remember(systemPrompt, tokenModel) {
+        ModelTokenizer.count(systemPrompt, tokenModel)
+    }
+    val summaryTokens = remember(summary, tokenModel) {
+        ModelTokenizer.count(summary?.text.orEmpty(), tokenModel)
+    }
+    val historyTokens = remember(pendingMessages, tokenModel) {
+        pendingMessages.sumOf { message ->
+            var tokens = if (message.text.isBlank()) {
+                0
+            } else {
+                ModelTokenizer.countMessage(message.text, tokenModel)
+            }
+            if (message.imagePath.isNotBlank()) {
+                tokens += ModelTokenizer.imageTokens(tokenModel, 1)
+            }
+            if (message.filePath.isNotBlank()) {
+                tokens += fileTokenEstimate(message.fileName, tokenModel)
+            }
+            tokens
+        }
+    }
+    val estimatedTokens = systemTokens + summaryTokens + historyTokens + avatarTokens +
+        ModelTokenizer.count(input, tokenModel)
+    // 有接口返回的真实用量时取两者较大值，圆环不会低估
+    val usedTokens = maxOf(estimatedTokens, lastUsage?.total ?: 0)
 
     fun append(message: ChatMessage, preview: String) {
         MessageStore.add(context, message)
@@ -261,19 +468,202 @@ fun ChatScreen(
             scope.launch { snackbarHostState.showSnackbar(noApiMessage) }
             return
         }
+        val chatConfig = config.copy(
+            thinkingEnabled = roleChatSettings.thinkingEnabled,
+            thinkingEffort = roleChatSettings.thinkingEffort
+        )
 
         sending = true
+        summarizing = false
         streamingText = ""
+        streamingReasoning = ""
+        reasoningStartedAt = 0L
+        reasoningEndedAt = 0L
         shownChars = 0
 
         scope.launch {
-            val history = MessageStore.load(context, roleId)
             try {
+                val limit = config.contextLimit
+                    .coerceIn(ApiConfig.MIN_CONTEXT_LIMIT, ApiConfig.MAX_CONTEXT_LIMIT)
+
+                var currentSummary = SummaryStore.load(context, roleId)
+                var effectiveSystem = buildSummarySystem(
+                    systemPrompt,
+                    currentSummary?.text.orEmpty()
+                )
+                var pending = MessageStore.load(context, roleId).filter { message ->
+                    currentSummary?.coveredIds?.contains(message.id) != true
+                }
+                var estimate = estimateContextTokens(
+                    effectiveSystem,
+                    pending,
+                    config.model,
+                    avatarTokens
+                )
+
+                // 达到 API 配置的阈值时，把最旧的一段滚动摘要掉，保留最近一段原文
+                val thresholdPercent = config.compressThreshold.coerceIn(
+                    ApiConfig.MIN_COMPRESS_THRESHOLD,
+                    ApiConfig.MAX_COMPRESS_THRESHOLD
+                )
+                val triggerTokens = (limit.toLong() * thresholdPercent / 100L)
+                    .toInt()
+                    .coerceAtLeast(1)
+                if (config.autoCompress && estimate > triggerTokens) {
+                    val systemTokens = ModelTokenizer.count(effectiveSystem, config.model)
+                    val keepBudget =
+                        (triggerTokens - systemTokens - avatarTokens - SUMMARY_RESERVE)
+                            .coerceAtLeast((triggerTokens * 0.20f).toInt())
+                            .coerceAtMost((triggerTokens * 0.65f).toInt())
+                    val keep = takeRecentMessages(pending, keepBudget, config.model)
+                    val keepIds = keep.mapTo(HashSet()) { it.id }
+                    val older = pending.filter { it.id !in keepIds && it.text.isNotBlank() }
+
+                    if (older.isNotEmpty()) {
+                        summarizing = true
+                        val transcript = buildSummaryTranscript(
+                            roleName = role.name,
+                            previous = currentSummary?.text.orEmpty(),
+                            older = older
+                        )
+                        val newText = runCatching {
+                            ChatApi.reply(
+                                context = context,
+                                config = chatConfig,
+                                systemPrompt = SUMMARY_SYSTEM_PROMPT,
+                                history = listOf(ChatMessage(fromUser = true, text = transcript)),
+                                useThinking = false
+                            )
+                        }.getOrNull()?.trim().orEmpty().take(4000)
+                        summarizing = false
+
+                        if (newText.isNotEmpty()) {
+                            val covered = (
+                                currentSummary?.coveredIds.orEmpty() + older.map { it.id }
+                                ).distinct()
+                            val saved = ChatSummary(
+                                roleId = roleId,
+                                text = newText,
+                                coveredIds = covered,
+                                updatedAt = System.currentTimeMillis()
+                            )
+                            SummaryStore.save(context, saved)
+                            summary = saved
+                            currentSummary = saved
+                            effectiveSystem = buildSummarySystem(systemPrompt, newText)
+                            pending = MessageStore.load(context, roleId).filter { message ->
+                                message.id !in covered
+                            }
+                            estimate = estimateContextTokens(
+                                effectiveSystem,
+                                pending,
+                                config.model,
+                                avatarTokens
+                            )
+                        } else {
+                            scope.launch {
+                                snackbarHostState.showSnackbar(
+                                    context.getString(R.string.context_summarize_failed)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // 联网搜索：把搜索结果作为临时的 system 上下文，不写进历史
+                if (canWebSearch && roleChatSettings.webSearchEnabled) {
+                    val query = pending.lastOrNull { it.fromUser && it.text.isNotBlank() }?.text
+                    if (!query.isNullOrBlank()) {
+                        searching = true
+                        val webContext = runCatching {
+                            ChatApi.webSearch(chatConfig, query)
+                        }.getOrNull()
+                        searching = false
+                        if (webContext.isNullOrBlank()) {
+                            scope.launch {
+                                snackbarHostState.showSnackbar(
+                                    context.getString(R.string.web_search_failed)
+                                )
+                            }
+                        } else {
+                            effectiveSystem = effectiveSystem + "\n\n" + webContext
+                            estimate = estimateContextTokens(
+                                effectiveSystem,
+                                pending,
+                                config.model,
+                                avatarTokens
+                            )
+                        }
+                    }
+                }
+
+                // 摘要失败或仍然超限时，本次请求只带最近一段，避免直接报上下文超限
+                var history = pending
+                if (estimate > limit) {
+                    val systemTokens = ModelTokenizer.count(effectiveSystem, config.model)
+                    val trimBudget = (limit - systemTokens - avatarTokens - TRIM_RESERVE)
+                        .coerceAtLeast((limit * 0.15f).toInt())
+                    history = takeRecentMessages(pending, trimBudget, config.model)
+                    if (history.size < pending.size) {
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                context.getString(R.string.context_trimmed)
+                            )
+                        }
+                    }
+                }
+
+                val onUsage: (Int, Int) -> Unit = { prompt, completion ->
+                    val usage = ApiUsage(
+                        promptTokens = prompt,
+                        completionTokens = completion,
+                        updatedAt = System.currentTimeMillis()
+                    )
+                    UsageStore.save(context, roleId, usage)
+                    scope.launch { lastUsage = usage }
+                }
+
                 if (AppPrefs.streamEnabled(context)) {
-                    ChatApi.streamReply(config, systemPrompt, history)
-                        .collect { delta -> streamingText += delta }
+                    ChatApi.streamReply(
+                        context = context,
+                        config = chatConfig,
+                        systemPrompt = effectiveSystem,
+                        history = history,
+                        avatars = avatarContext,
+                        onUsage = onUsage
+                    ).collect { event ->
+                        when (event) {
+                            is ChatStreamEvent.Content -> {
+                                if (reasoningStartedAt > 0L && reasoningEndedAt == 0L) {
+                                    reasoningEndedAt = System.currentTimeMillis()
+                                }
+                                streamingText += event.text
+                            }
+
+                            is ChatStreamEvent.Reasoning -> {
+                                if (reasoningStartedAt == 0L) {
+                                    reasoningStartedAt = System.currentTimeMillis()
+                                }
+                                streamingReasoning += event.text
+                            }
+                        }
+                    }
                 } else {
-                    streamingText = ChatApi.reply(config, systemPrompt, history)
+                    val startedAt = System.currentTimeMillis()
+                    val result = ChatApi.replyDetailed(
+                        context = context,
+                        config = chatConfig,
+                        systemPrompt = effectiveSystem,
+                        history = history,
+                        avatars = avatarContext,
+                        onUsage = onUsage
+                    )
+                    streamingText = result.content
+                    streamingReasoning = result.reasoning
+                    if (result.reasoning.isNotBlank()) {
+                        reasoningStartedAt = startedAt
+                        reasoningEndedAt = System.currentTimeMillis()
+                    }
                 }
 
                 val reply = streamingText.trim()
@@ -289,6 +679,13 @@ fun ChatScreen(
                             roleId = roleId,
                             fromUser = false,
                             text = reply,
+                            reasoning = streamingReasoning.trim(),
+                            reasoningMs = if (reasoningStartedAt > 0L) {
+                                (reasoningEndedAt.takeIf { it > 0L }
+                                    ?: System.currentTimeMillis()) - reasoningStartedAt
+                            } else {
+                                0L
+                            },
                             at = System.currentTimeMillis()
                         ),
                         reply
@@ -300,8 +697,93 @@ fun ChatScreen(
                 )
             } finally {
                 sending = false
+                summarizing = false
+                searching = false
                 streamingText = ""
+                streamingReasoning = ""
+                reasoningStartedAt = 0L
+                reasoningEndedAt = 0L
                 shownChars = 0
+            }
+        }
+    }
+
+    /** 长按用量圆环：不等自动阈值，立即把较早的一半消息压缩成摘要。 */
+    fun manualCompress() {
+        if (sending || summarizing || searching || manualCompressing) {
+            scope.launch {
+                snackbarHostState.showSnackbar(context.getString(R.string.context_compress_busy))
+            }
+            return
+        }
+        val config = ApiConfigStore.loadAll(context).firstOrNull { it.enabled }
+        if (config == null || config.apiKey.isBlank() || config.model.isBlank()) {
+            scope.launch { snackbarHostState.showSnackbar(noApiMessage) }
+            return
+        }
+
+        val currentSummary = SummaryStore.load(context, roleId)
+        val covered = currentSummary?.coveredIds.orEmpty().toSet()
+        val pending = MessageStore.load(context, roleId).filter { it.id !in covered }
+        val keepCount = (pending.size / 2).coerceIn(2, 10)
+        if (pending.size <= keepCount) {
+            scope.launch {
+                snackbarHostState.showSnackbar(context.getString(R.string.context_compress_empty))
+            }
+            return
+        }
+        val older = pending.dropLast(keepCount).filter { it.text.isNotBlank() }
+        if (older.isEmpty()) {
+            scope.launch {
+                snackbarHostState.showSnackbar(context.getString(R.string.context_compress_empty))
+            }
+            return
+        }
+
+        val transcript = buildSummaryTranscript(
+            roleName = role.name,
+            previous = currentSummary?.text.orEmpty(),
+            older = older
+        )
+        manualCompressing = true
+        scope.launch {
+            snackbarHostState.showSnackbar(context.getString(R.string.context_summarizing))
+        }
+        scope.launch {
+            try {
+                val newText = runCatching {
+                    ChatApi.reply(
+                        context = context,
+                        config = config.copy(thinkingEnabled = false),
+                        systemPrompt = SUMMARY_SYSTEM_PROMPT,
+                        history = listOf(ChatMessage(fromUser = true, text = transcript)),
+                        useThinking = false
+                    )
+                }.getOrNull()?.trim().orEmpty().take(4000)
+
+                if (newText.isNotEmpty()) {
+                    val newCovered = (covered + older.map { it.id }).distinct()
+                    val saved = ChatSummary(
+                        roleId = roleId,
+                        text = newText,
+                        coveredIds = newCovered,
+                        updatedAt = System.currentTimeMillis()
+                    )
+                    SummaryStore.save(context, saved)
+                    summary = saved
+                    // 手动压缩后旧的接口 usage 已经过时，让圆环回到当前估算
+                    UsageStore.clear(context, roleId)
+                    lastUsage = null
+                    snackbarHostState.showSnackbar(
+                        context.getString(R.string.context_compress_done)
+                    )
+                } else {
+                    snackbarHostState.showSnackbar(
+                        context.getString(R.string.context_compress_failed)
+                    )
+                }
+            } finally {
+                manualCompressing = false
             }
         }
     }
@@ -386,24 +868,30 @@ fun ChatScreen(
         if (id !in selectedIds) selectedIds = selectedIds + id
     }
 
+    val pendingAttachment = messages.lastOrNull()?.let { message ->
+        message.fromUser && (message.imagePath.isNotBlank() || message.filePath.isNotBlank())
+    } == true && !sending
+
     val sendAction: () -> Unit = {
         val text = input.trim()
-        if (text.isNotEmpty() && !sending) {
+        if (!sending && (text.isNotEmpty() || pendingAttachment)) {
             val config = ApiConfigStore.loadAll(context).firstOrNull { it.enabled }
             if (config == null || config.apiKey.isBlank() || config.model.isBlank()) {
                 scope.launch { snackbarHostState.showSnackbar(noApiMessage) }
             } else {
-                append(
-                    ChatMessage(
-                        roleId = roleId,
-                        fromUser = true,
-                        text = text,
-                        at = System.currentTimeMillis()
-                    ),
-                    text
-                )
-                input = ""
-                DraftStore.clear(context, roleId)
+                if (text.isNotEmpty()) {
+                    append(
+                        ChatMessage(
+                            roleId = roleId,
+                            fromUser = true,
+                            text = text,
+                            at = System.currentTimeMillis()
+                        ),
+                        text
+                    )
+                    input = ""
+                    DraftStore.clear(context, roleId)
+                }
                 startReply()
             }
         }
@@ -462,40 +950,79 @@ fun ChatScreen(
         }
     }
 
+    Box(Modifier.fillMaxSize()) {
     Scaffold(
-        modifier = Modifier.pointerInput(Unit) {
-            awaitEachGesture {
-                // 只观察、不消费：任何非长按、非拖动的点击都用来取消文字选择
-                val down = awaitFirstDown(requireUnconsumed = false)
-                var moved = false
-                var upChange: PointerInputChange? = null
-                while (true) {
-                    val event = awaitPointerEvent(PointerEventPass.Final)
-                    val change = event.changes.firstOrNull { it.id == down.id } ?: break
-                    if (change.positionChange().getDistance() > viewConfiguration.touchSlop) {
-                        moved = true
+        modifier = Modifier
+            .fillMaxSize()
+            .onGloballyPositioned { scaffoldRootOffset = it.positionInRoot() }
+            .pointerInput(Unit) {
+                awaitEachGesture {
+                    // 只观察、不消费：短按用来取消文字选择，点输入栏以外还收起键盘
+                    val down = awaitFirstDown(requireUnconsumed = false)
+                    // 任何触摸都算一次操作，重置常亮计时
+                    keepAwakeTick++
+                    var moved = false
+                    var upChange: PointerInputChange? = null
+                    while (true) {
+                        val event = awaitPointerEvent(PointerEventPass.Final)
+                        val change = event.changes.firstOrNull { it.id == down.id } ?: break
+                        if (change.positionChange().getDistance() > viewConfiguration.touchSlop) {
+                            moved = true
+                        }
+                        if (!change.pressed) {
+                            upChange = change
+                            break
+                        }
                     }
-                    if (!change.pressed) {
-                        upChange = change
-                        break
+                    val up = upChange
+                    if (up != null && !moved &&
+                        up.uptimeMillis - down.uptimeMillis < viewConfiguration.longPressTimeoutMillis
+                    ) {
+                        selectionReset++
+                        textSelectionActive = false
+                        val inInput = inputBarBounds.contains(up.position + scaffoldRootOffset)
+                        if (!inInput) {
+                            focusManager.clearFocus()
+                        }
                     }
                 }
-                val up = upChange
-                if (up != null && !moved &&
-                    up.uptimeMillis - down.uptimeMillis < viewConfiguration.longPressTimeoutMillis
-                ) {
-                    selectionReset++
-                    textSelectionActive = false
-                }
-            }
-        },
+            },
         containerColor = colors.background,
         snackbarHost = { AppSnackbarHost(snackbarHostState) },
         topBar = {
             ChatTopBar(
                 role = role,
+                contextUsed = usedTokens,
+                contextLimit = contextLimit,
+                thinkingVisible = isDeepSeek,
+                thinkingEnabled = roleChatSettings.thinkingEnabled,
+                thinkingEffort = roleChatSettings.thinkingEffort,
+                webSearchVisible = canWebSearch,
+                webSearchEnabled = roleChatSettings.webSearchEnabled,
+                onWebSearchToggle = {
+                    val updated = roleChatSettings.copy(
+                        webSearchEnabled = !roleChatSettings.webSearchEnabled
+                    )
+                    roleChatSettings = updated
+                    RoleChatSettingsStore.save(context, roleId, updated)
+                },
+                onThinkingToggle = {
+                    val updated = roleChatSettings.copy(
+                        thinkingEnabled = !roleChatSettings.thinkingEnabled
+                    )
+                    roleChatSettings = updated
+                    RoleChatSettingsStore.save(context, roleId, updated)
+                },
+                onThinkingEffortChange = { effort ->
+                    val updated = roleChatSettings.copy(thinkingEffort = effort)
+                    roleChatSettings = updated
+                    RoleChatSettingsStore.save(context, roleId, updated)
+                },
                 onBack = { if (selecting) exitSelection() else onBack() },
-                onOpenSettings = onOpenSettings
+                onOpenSettings = onOpenSettings,
+                onManualCompress = { manualCompress() },
+                thinkingPicker = thinkingPicker,
+                usagePopup = usagePopup
             )
         },
         bottomBar = {
@@ -509,12 +1036,28 @@ fun ChatScreen(
                     }
                 )
             } else {
-                ChatInputBar(
-                    input = input,
-                    onInputChange = { input = it },
-                    onAttach = { showAttachSheet = true },
-                    onSend = sendAction
-                )
+                Box(
+                    modifier = Modifier.onGloballyPositioned { coordinates ->
+                        inputBarBounds = Rect(
+                            coordinates.positionInRoot(),
+                            Size(
+                                coordinates.size.width.toFloat(),
+                                coordinates.size.height.toFloat()
+                            )
+                        )
+                    }
+                ) {
+                    ChatInputBar(
+                        input = input,
+                        onInputChange = {
+                            input = it
+                            keepAwakeTick++
+                        },
+                        onAttach = { showAttachSheet = true },
+                        canSendEmpty = pendingAttachment,
+                        onSend = sendAction
+                    )
+                }
             }
         }
     ) { innerPadding ->
@@ -532,10 +1075,6 @@ fun ChatScreen(
                             onDrag = { change, _ -> selectAtPosition(change.position) }
                         )
                     }
-                }
-                .clickable(interactionSource = null, indication = null) {
-                    // 点空白处收起键盘
-                    focusManager.clearFocus()
                 },
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -543,33 +1082,77 @@ fun ChatScreen(
             // 反向布局：索引 0 在最底部，所以"输入中"气泡排在最前
             if (sending) {
                 item("typing") {
-                    Row(
+                    Column(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Start
+                        horizontalAlignment = Alignment.Start
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .widthIn(max = 280.dp)
-                                .clip(RoundedCornerShape(16.dp, 16.dp, 16.dp, 4.dp))
-                                .background(colors.surfaceVariant)
-                                .padding(horizontal = 13.dp, vertical = 9.dp)
-                        ) {
-                            val visibleText = streamingText.take(shownChars)
-                            if (visibleText.isEmpty()) {
-                                TypingIndicator(color = colors.onSurfaceVariant)
-                            } else if (typewriterEnabled) {
-                                PoppingText(
-                                    text = visibleText,
-                                    color = colors.onSurface,
-                                    backgroundColor = colors.surfaceVariant
-                                )
-                            } else {
-                                Text(
-                                    text = visibleText,
-                                    fontSize = 15.sp,
-                                    lineHeight = 21.sp,
-                                    color = colors.onSurface
-                                )
+                        val hasReasoning = streamingReasoning.isNotBlank()
+                        if (hasReasoning && !summarizing && !searching) {
+                            ReasoningBlock(
+                                text = streamingReasoning,
+                                durationMs = if (reasoningStartedAt > 0L && reasoningEndedAt > 0L) {
+                                    reasoningEndedAt - reasoningStartedAt
+                                } else {
+                                    0L
+                                },
+                                thinking = streamingText.isEmpty()
+                            )
+                            Spacer(Modifier.height(5.dp))
+                        }
+                        if (streamingText.isNotEmpty() || !hasReasoning) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Start
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .widthIn(max = 280.dp)
+                                        .clip(RoundedCornerShape(16.dp, 16.dp, 16.dp, 4.dp))
+                                        .background(colors.surfaceVariant)
+                                        .padding(horizontal = 13.dp, vertical = 9.dp)
+                                ) {
+                                    val visibleText = streamingText.take(shownChars)
+                                    if (visibleText.isEmpty()) {
+                                        when {
+                                            summarizing -> {
+                                                Text(
+                                                    text = stringResource(
+                                                        R.string.context_summarizing
+                                                    ),
+                                                    fontSize = 14.sp,
+                                                    color = colors.onSurfaceVariant
+                                                )
+                                            }
+
+                                            searching -> {
+                                                Text(
+                                                    text = stringResource(
+                                                        R.string.web_searching
+                                                    ),
+                                                    fontSize = 14.sp,
+                                                    color = colors.onSurfaceVariant
+                                                )
+                                            }
+
+                                            else -> TypingIndicator(
+                                                color = colors.onSurfaceVariant
+                                            )
+                                        }
+                                    } else if (typewriterEnabled) {
+                                        PoppingText(
+                                            text = visibleText,
+                                            color = colors.onSurface,
+                                            backgroundColor = colors.surfaceVariant
+                                        )
+                                    } else {
+                                        Text(
+                                            text = visibleText,
+                                            fontSize = 15.sp,
+                                            lineHeight = 21.sp,
+                                            color = colors.onSurface
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
@@ -634,7 +1217,39 @@ fun ChatScreen(
                     )
                 }
             }
+
+            // 反向下标列表的末尾就是最上方：显示更早对话的摘要
+            val currentSummary = summary
+            if (currentSummary != null) {
+                item("context_summary") {
+                    ContextSummaryCard(
+                        summary = currentSummary,
+                        coveredCount = currentSummary.coveredIds.count { id ->
+                            messages.any { it.id == id }
+                        },
+                        expanded = summaryExpanded,
+                        onToggle = { summaryExpanded = !summaryExpanded }
+                    )
+                }
+            }
         }
+    }
+
+    if (thinkingPicker.visible) {
+        ThinkingEffortOverlay(
+            anchor = thinkingPicker.anchor,
+            hovered = thinkingPicker.hovered,
+            currentEffort = roleChatSettings.thinkingEffort
+        )
+    }
+    if (usagePopup.visible) {
+        UsageTooltipOverlay(
+            anchor = usagePopup.anchor,
+            used = usedTokens,
+            limit = contextLimit,
+            onDismiss = { usagePopup.visible = false }
+        )
+    }
     }
 
     if (showAttachSheet) {
@@ -847,8 +1462,112 @@ private fun EditMessageDialog(
     )
 }
 
+private fun buildSummarySystem(base: String, summaryText: String): String =
+    if (summaryText.isBlank()) {
+        base
+    } else {
+        base + "\n\nEarlier conversation summary:\n" + summaryText
+    }
+
+private fun fileTokenEstimate(fileName: String, model: String): Int {
+    val ext = fileName.substringAfterLast('.', "").lowercase()
+    return when {
+        ext in setOf("jpg", "jpeg", "png", "gif", "webp") ->
+            ModelTokenizer.imageTokens(model, 1)
+        ext == "pdf" -> ModelTokenizer.imageTokens(model, 5)
+        else -> 8_000
+    }
+}
+
+private fun estimateContextTokens(
+    system: String,
+    messages: List<ChatMessage>,
+    model: String,
+    extraTokens: Int = 0
+): Int = extraTokens + ModelTokenizer.count(system, model) + messages.sumOf { message ->
+    var tokens = if (message.text.isBlank()) {
+        0
+    } else {
+        ModelTokenizer.countMessage(message.text, model)
+    }
+    if (message.imagePath.isNotBlank()) {
+        tokens += ModelTokenizer.imageTokens(model, 1)
+    }
+    if (message.filePath.isNotBlank()) {
+        tokens += fileTokenEstimate(message.fileName, model)
+    }
+    tokens
+}
+
+/** 从最新消息往前收，尽量装满预算；至少保留一条，避免把刚发的消息裁掉。 */
+private fun takeRecentMessages(
+    messages: List<ChatMessage>,
+    budget: Int,
+    model: String
+): List<ChatMessage> {
+    if (messages.isEmpty()) return emptyList()
+    val selected = ArrayDeque<ChatMessage>()
+    var total = 0
+    for (message in messages.asReversed()) {
+        var tokens = if (message.text.isBlank()) {
+            0
+        } else {
+            ModelTokenizer.countMessage(message.text, model)
+        }
+        if (message.imagePath.isNotBlank()) {
+            tokens += ModelTokenizer.imageTokens(model, 1)
+        }
+        if (message.filePath.isNotBlank()) {
+            tokens += fileTokenEstimate(message.fileName, model)
+        }
+        if (selected.isNotEmpty() && total + tokens > budget) break
+        total += tokens
+        selected.addFirst(message)
+    }
+    return selected
+}
+
+private fun buildSummaryTranscript(
+    roleName: String,
+    previous: String,
+    older: List<ChatMessage>
+): String {
+    val builder = StringBuilder()
+    if (previous.isNotBlank()) {
+        builder.append("Previous summary:\n")
+            .append(previous.trim())
+            .append("\n\n")
+    }
+    builder.append("New old messages:\n")
+    older.forEach { message ->
+        if (message.text.isNotBlank()) {
+            builder.append(if (message.fromUser) "User: " else "${roleName.ifBlank { "Character" }}: ")
+                .append(message.text.trim())
+                .append("\n\n")
+        }
+    }
+    return builder.toString()
+}
+
 @Composable
-private fun ChatTopBar(role: Role, onBack: () -> Unit, onOpenSettings: () -> Unit) {
+private fun ChatTopBar(
+    role: Role,
+    contextUsed: Int,
+    contextLimit: Int,
+    thinkingVisible: Boolean,
+    thinkingEnabled: Boolean,
+    thinkingEffort: String,
+    webSearchVisible: Boolean,
+    webSearchEnabled: Boolean,
+    onWebSearchToggle: () -> Unit,
+    onThinkingToggle: () -> Unit,
+    onThinkingEffortChange: (String) -> Unit,
+    onBack: () -> Unit,
+    onOpenSettings: () -> Unit,
+    onManualCompress: () -> Unit,
+    thinkingPicker: ThinkingPickerState,
+    usagePopup: UsagePopupState
+) {
     val colors = MaterialTheme.colorScheme
     Column {
     // 与主界面头部保持同样的内边距，右侧图标位置才对得上
@@ -875,15 +1594,57 @@ private fun ChatTopBar(role: Role, onBack: () -> Unit, onOpenSettings: () -> Uni
 
         Spacer(Modifier.width(10.dp))
 
-        Text(
-            text = role.name,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = colors.onSurface,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f)
-        )
+        Row(
+            modifier = Modifier.weight(1f),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = role.name,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = colors.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f, fill = false)
+            )
+            Spacer(Modifier.width(8.dp))
+            Box {
+                ContextUsageRing(
+                    used = contextUsed,
+                    limit = contextLimit,
+                    onClick = { usagePopup.visible = true },
+                    onLongClick = onManualCompress,
+                    onBounds = { bounds -> usagePopup.anchor = bounds }
+                )
+            }
+            if (thinkingVisible) {
+                Spacer(Modifier.width(2.dp))
+                ThinkingControl(
+                    enabled = thinkingEnabled,
+                    effort = thinkingEffort,
+                    onToggle = onThinkingToggle,
+                    onEffortChange = onThinkingEffortChange,
+                    picker = thinkingPicker
+                )
+            }
+            if (webSearchVisible) {
+                IconButton(
+                    onClick = onWebSearchToggle,
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Language,
+                        contentDescription = stringResource(R.string.web_search_title),
+                        tint = if (webSearchEnabled) {
+                            colors.primary
+                        } else {
+                            colors.onSurfaceVariant
+                        },
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            }
+        }
 
         // 三个点进角色设置，和主界面的齿轮区分开
         IconButton(onClick = onOpenSettings, modifier = Modifier.size(44.dp)) {
@@ -895,8 +1656,438 @@ private fun ChatTopBar(role: Role, onBack: () -> Unit, onOpenSettings: () -> Uni
             )
         }
     }
+    }
+}
 
-    HorizontalDivider(thickness = 0.8.dp, color = colors.outline)
+/** 长按思考图标时，页面根部浮层的状态。 */
+private class ThinkingPickerState {
+    var visible by mutableStateOf(false)
+    var hovered by mutableIntStateOf(0)
+    var anchor by mutableStateOf(Rect.Zero)
+}
+
+/** 用量气泡的显示状态和圆环位置。 */
+private class UsagePopupState {
+    var visible by mutableStateOf(false)
+    var anchor by mutableStateOf(Rect.Zero)
+}
+
+/** 圆角矩形 + 顶部居中小三角，作为气泡的整体背景形状。 */
+private class TooltipShape(
+    private val arrowWidthPx: Float,
+    private val arrowHeightPx: Float,
+    private val cornerRadiusPx: Float
+) : Shape {
+    override fun createOutline(
+        size: Size,
+        layoutDirection: LayoutDirection,
+        density: Density
+    ): Outline {
+        val cardTop = arrowHeightPx
+        val radius = cornerRadiusPx.coerceAtMost(
+            minOf(size.width / 2f, (size.height - cardTop) / 2f)
+        )
+        val card = Path().apply {
+            addRoundRect(
+                RoundRect(
+                    left = 0f,
+                    top = cardTop,
+                    right = size.width,
+                    bottom = size.height,
+                    topLeftCornerRadius = CornerRadius(radius, radius),
+                    topRightCornerRadius = CornerRadius(radius, radius),
+                    bottomLeftCornerRadius = CornerRadius(radius, radius),
+                    bottomRightCornerRadius = CornerRadius(radius, radius)
+                )
+            )
+        }
+        val arrow = Path().apply {
+            moveTo(size.width / 2f - arrowWidthPx / 2f, cardTop)
+            lineTo(size.width / 2f, 0f)
+            lineTo(size.width / 2f + arrowWidthPx / 2f, cardTop)
+            close()
+        }
+        val combined = Path().apply {
+            op(card, arrow, PathOperation.Union)
+        }
+        return Outline.Generic(combined)
+    }
+}
+
+/** 角色名旁的 DeepSeek 思考开关和强度选择：点击开关，长按下滑选强度。 */
+@Composable
+private fun ThinkingControl(
+    enabled: Boolean,
+    effort: String,
+    onToggle: () -> Unit,
+    onEffortChange: (String) -> Unit,
+    picker: ThinkingPickerState
+) {
+    val colors = MaterialTheme.colorScheme
+    val density = LocalDensity.current
+    val options = listOf(
+        "low" to R.string.thinking_effort_low,
+        "medium" to R.string.thinking_effort_medium,
+        "high" to R.string.thinking_effort_high
+    )
+    var iconBounds by remember { mutableStateOf(Rect.Zero) }
+    val rowHeightPx = with(density) { 40.dp.toPx() }
+    // 浮层顶部：8dp 间距 + 8dp 箭头，之后三行直接贴住上下边
+    val firstRowOffsetPx = with(density) { 16.dp.toPx() }
+
+    Box(
+        modifier = Modifier
+            .size(32.dp)
+            .clip(CircleShape)
+            .onGloballyPositioned { coordinates ->
+                iconBounds = Rect(
+                    coordinates.positionInRoot(),
+                    Size(
+                        coordinates.size.width.toFloat(),
+                        coordinates.size.height.toFloat()
+                    )
+                )
+            }
+            .clickable(onClick = onToggle)
+            .pointerInput(Unit) {
+                detectDragGesturesAfterLongPress(
+                    onDragStart = {
+                        picker.hovered = 0
+                        picker.anchor = iconBounds
+                        picker.visible = true
+                    },
+                    onDrag = { change, _ ->
+                        change.consume()
+                        // 按手指当前所在的浮层行高亮，而不是按拖动距离
+                        val pointerY = iconBounds.top + change.position.y
+                        val firstRowTop = iconBounds.bottom + firstRowOffsetPx
+                        picker.hovered = when {
+                            pointerY < firstRowTop + rowHeightPx -> 0
+                            pointerY < firstRowTop + rowHeightPx * 2 -> 1
+                            else -> 2
+                        }.coerceIn(0, options.lastIndex)
+                    },
+                    onDragEnd = {
+                        onEffortChange(options[picker.hovered].first)
+                        picker.visible = false
+                    },
+                    onDragCancel = { picker.visible = false }
+                )
+            },
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.Psychology,
+            contentDescription = stringResource(R.string.thinking_title),
+            tint = if (enabled) colors.primary else colors.onSurfaceVariant,
+            modifier = Modifier.size(19.dp)
+        )
+    }
+}
+
+/** 长按拖动时显示在思考图标下方的三档强度浮层。 */
+@Composable
+private fun ThinkingEffortOverlay(
+    anchor: Rect,
+    hovered: Int,
+    currentEffort: String
+) {
+    val colors = MaterialTheme.colorScheme
+    val density = LocalDensity.current
+    val screenWidthPx = with(density) {
+        LocalConfiguration.current.screenWidthDp.dp.toPx()
+    }
+    val options = listOf(
+        "low" to R.string.thinking_effort_low,
+        "medium" to R.string.thinking_effort_medium,
+        "high" to R.string.thinking_effort_high
+    )
+    val popupWidth = 168.dp
+    val popupWidthPx = with(density) { popupWidth.toPx() }
+    val gapPx = with(density) { 8.dp.toPx() }
+    val edgePx = with(density) { 8.dp.toPx() }
+    val arrowWidthPx = with(density) { 16.dp.toPx() }
+    val arrowHeightPx = with(density) { 8.dp.toPx() }
+    val cornerPx = with(density) { 12.dp.toPx() }
+    val shape = remember(arrowWidthPx, arrowHeightPx, cornerPx) {
+        TooltipShape(arrowWidthPx, arrowHeightPx, cornerPx)
+    }
+    val x = (anchor.center.x - popupWidthPx / 2f)
+        .coerceIn(edgePx, (screenWidthPx - popupWidthPx - edgePx).coerceAtLeast(edgePx))
+
+    Surface(
+        modifier = Modifier
+            .offset {
+                IntOffset(
+                    x = x.roundToInt(),
+                    y = (anchor.bottom + gapPx).roundToInt()
+                )
+            }
+            .width(popupWidth),
+        shape = shape,
+        color = colors.surfaceContainerHigh,
+        border = BorderStroke(0.7.dp, colors.outlineVariant),
+        shadowElevation = 6.dp
+    ) {
+        Column(modifier = Modifier.padding(top = 8.dp)) {
+            options.forEachIndexed { index, (value, label) ->
+                val active = index == hovered
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp)
+                        .background(
+                            if (active) {
+                                colors.primary.copy(alpha = 0.12f)
+                            } else {
+                                Color.Transparent
+                            }
+                        )
+                        .padding(horizontal = 14.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(label),
+                        fontSize = 13.sp,
+                        color = if (active) colors.primary else colors.onSurface,
+                        modifier = Modifier.weight(1f)
+                    )
+                    if (currentEffort == value) {
+                        Icon(
+                            imageVector = Icons.Filled.Check,
+                            contentDescription = null,
+                            tint = colors.primary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** 用量气泡：全屏遮罩 + 按圆环圆心精确放置的气泡。 */
+@Composable
+private fun UsageTooltipOverlay(
+    anchor: Rect,
+    used: Int,
+    limit: Int,
+    onDismiss: () -> Unit
+) {
+    val colors = MaterialTheme.colorScheme
+    val density = LocalDensity.current
+    val gapPx = with(density) { 6.dp.roundToPx() }
+    val marginPx = with(density) { 8.dp.roundToPx() }
+    // ContextUsageRing 里实际画出来的圆环直径是 16dp
+    val ringRadiusPx = with(density) { 8.dp.toPx() }
+    val arrowWidthPx = with(density) { 16.dp.toPx() }
+    val arrowHeightPx = with(density) { 8.dp.toPx() }
+    val cornerPx = with(density) { 12.dp.toPx() }
+    val shape = remember(arrowWidthPx, arrowHeightPx, cornerPx) {
+        TooltipShape(arrowWidthPx, arrowHeightPx, cornerPx)
+    }
+    val percent = if (limit > 0) {
+        (used * 100f / limit).toInt().coerceIn(0, 999)
+    } else {
+        0
+    }
+
+    Box(Modifier.fillMaxSize()) {
+        // 点气泡外面关闭
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = { onDismiss() })
+                }
+        )
+        AnchoredTooltipLayout(
+            centerX = anchor.center.x,
+            topY = anchor.center.y + ringRadiusPx + gapPx,
+            marginPx = marginPx
+        ) {
+            Surface(
+                shape = shape,
+                color = colors.surfaceContainerHigh,
+                border = BorderStroke(0.7.dp, colors.outlineVariant),
+                shadowElevation = 6.dp
+            ) {
+                Column(
+                    modifier = Modifier
+                        .widthIn(max = 300.dp)
+                        .padding(start = 14.dp, end = 14.dp, top = 18.dp, bottom = 10.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(R.string.context_usage),
+                        fontSize = 12.sp,
+                        color = colors.onSurfaceVariant,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(Modifier.height(3.dp))
+                    Text(
+                        text = stringResource(
+                            R.string.context_usage_detail,
+                            used,
+                            limit,
+                            percent
+                        ),
+                        fontSize = 14.sp,
+                        color = colors.onSurface,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+    }
+}
+
+/** 把内容水平中心对准 centerX，顶部放在 topY；超过屏幕时夹在边距内。 */
+@Composable
+private fun AnchoredTooltipLayout(
+    centerX: Float,
+    topY: Float,
+    marginPx: Int,
+    content: @Composable () -> Unit
+) {
+    Layout(content = content, modifier = Modifier.fillMaxSize()) { measurables, constraints ->
+        val maxContentWidth = (constraints.maxWidth - marginPx * 2).coerceAtLeast(0)
+        val placeable = measurables.first().measure(
+            Constraints(maxWidth = maxContentWidth)
+        )
+        layout(constraints.maxWidth, constraints.maxHeight) {
+            val maxX = (constraints.maxWidth - placeable.width - marginPx)
+                .coerceAtLeast(marginPx)
+            val x = (centerX - placeable.width / 2f)
+                .roundToInt()
+                .coerceIn(marginPx, maxX)
+            placeable.place(x, topY.roundToInt())
+        }
+    }
+}
+
+/** 角色名右侧的上下文用量圆环：按占用比例变色，点击查看详情。 */
+@Composable
+@OptIn(ExperimentalFoundationApi::class)
+private fun ContextUsageRing(
+    used: Int,
+    limit: Int,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit,
+    onBounds: (Rect) -> Unit
+) {
+    val colors = MaterialTheme.colorScheme
+    val fraction = if (limit > 0) {
+        (used.toFloat() / limit).coerceIn(0f, 1f)
+    } else {
+        0f
+    }
+    val percent = (fraction * 100).toInt()
+    val arcColor = when {
+        fraction >= 0.85f -> colors.error
+        fraction >= 0.6f -> colors.tertiary
+        else -> colors.primary
+    }
+    val description = stringResource(R.string.context_usage_ring, percent)
+
+    Box(
+        modifier = Modifier
+            .size(28.dp)
+            .clip(CircleShape)
+            .onGloballyPositioned { coordinates ->
+                onBounds(
+                    Rect(
+                        coordinates.positionInRoot(),
+                        Size(
+                            coordinates.size.width.toFloat(),
+                            coordinates.size.height.toFloat()
+                        )
+                    )
+                )
+            }
+            .combinedClickable(onClick = onClick, onLongClick = onLongClick)
+            .semantics { contentDescription = description },
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(Modifier.size(16.dp)) {
+            val stroke = 2.2.dp.toPx()
+            val radius = (size.minDimension - stroke) / 2f
+            drawCircle(
+                color = colors.outlineVariant,
+                radius = radius,
+                style = Stroke(width = stroke)
+            )
+            if (fraction > 0f) {
+                drawArc(
+                    color = arcColor,
+                    startAngle = -90f,
+                    sweepAngle = 360f * fraction,
+                    useCenter = false,
+                    topLeft = Offset(stroke / 2f, stroke / 2f),
+                    size = Size(size.width - stroke, size.height - stroke),
+                    style = Stroke(width = stroke, cap = StrokeCap.Round)
+                )
+            }
+        }
+    }
+}
+
+/** 消息列表最上方的旧对话摘要卡片。 */
+@Composable
+private fun ContextSummaryCard(
+    summary: ChatSummary,
+    coveredCount: Int,
+    expanded: Boolean,
+    onToggle: () -> Unit
+) {
+    val colors = MaterialTheme.colorScheme
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(14.dp))
+            .background(colors.surfaceVariant.copy(alpha = 0.55f))
+            .border(0.8.dp, colors.outlineVariant, RoundedCornerShape(14.dp))
+            .padding(horizontal = 14.dp, vertical = 10.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.context_summary_title),
+            fontSize = 12.5.sp,
+            fontWeight = FontWeight.Medium,
+            color = colors.primary
+        )
+        Spacer(Modifier.height(4.dp))
+        Text(
+            text = summary.text,
+            fontSize = 13.sp,
+            lineHeight = 19.sp,
+            color = colors.onSurfaceVariant,
+            maxLines = if (expanded) Int.MAX_VALUE else 4,
+            overflow = TextOverflow.Ellipsis
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.context_summary_meta, coveredCount),
+                fontSize = 11.sp,
+                color = colors.onSurfaceVariant
+            )
+            Spacer(Modifier.weight(1f))
+            TextButton(onClick = onToggle) {
+                Text(
+                    text = stringResource(
+                        if (expanded) {
+                            R.string.context_summary_collapse
+                        } else {
+                            R.string.context_summary_expand
+                        }
+                    ),
+                    fontSize = 12.sp,
+                    color = colors.primary
+                )
+            }
+        }
     }
 }
 
@@ -989,10 +2180,11 @@ private fun ChatInputBar(
     input: String,
     onInputChange: (String) -> Unit,
     onAttach: () -> Unit,
+    canSendEmpty: Boolean,
     onSend: () -> Unit
 ) {
     val colors = MaterialTheme.colorScheme
-    val canSend = input.isNotBlank()
+    val canSend = input.isNotBlank() || canSendEmpty
 
     Row(
         modifier = Modifier
@@ -1019,21 +2211,52 @@ private fun ChatInputBar(
             )
         }
 
-        Spacer(Modifier.width(8.dp))
+        Spacer(Modifier.width(12.dp))
 
         var chatTextLayout by remember { mutableStateOf<TextLayoutResult?>(null) }
-        val chatPadH = with(LocalDensity.current) { 14.dp.toPx() }
-        val chatPadV = with(LocalDensity.current) { 10.dp.toPx() }
+        val chatDensity = LocalDensity.current
+        val chatPadH = with(chatDensity) { 14.dp.toPx() }
+        val chatPadV = with(chatDensity) { 10.dp.toPx() }
         // 竖线宽 2dp，水滴尖对准其中心
-        val chatCaretHalf = with(LocalDensity.current) { 1.dp.toPx() }
+        val chatCaretHalf = with(chatDensity) { 1.dp.toPx() }
+        val maxChatInputHeight = with(chatDensity) { (20.sp.toDp() * 4) + 20.dp }
         val chatFade = AppPrefs.cursorFadeEnabled(LocalContext.current)
         var chatFocused by remember { mutableStateOf(false) }
         var chatValue by remember { mutableStateOf(TextFieldValue(input)) }
+        var chatInputHeight by remember { mutableIntStateOf(0) }
+        // 自己管理滚动，才能知道真实滚动量；手滑/点选后光标都能跟上
+        val chatScrollState = rememberScrollState()
+        val chatFocus = remember { FocusRequester() }
         if (chatValue.text != input) {
             chatValue = chatValue.copy(
                 text = input,
                 selection = TextRange(chatValue.selection.end.coerceIn(0, input.length))
             )
+        }
+        // 光标变化时把它滚进可视区，替代 BasicTextField 的内部滚动
+        LaunchedEffect(
+            chatValue.selection,
+            chatTextLayout,
+            chatScrollState.maxValue,
+            chatInputHeight
+        ) {
+            val layout = chatTextLayout ?: return@LaunchedEffect
+            if (chatInputHeight <= 0) return@LaunchedEffect
+            val offset = chatValue.selection.start
+                .coerceIn(0, layout.layoutInput.text.length)
+            val caret = layout.getCursorRect(offset)
+            val current = chatScrollState.value.toFloat()
+            val caretTop = chatPadV + caret.top - current
+            val caretBottom = chatPadV + caret.bottom - current
+            val target = when {
+                caretTop < chatPadV -> current + caretTop - chatPadV
+                caretBottom > chatInputHeight - chatPadV ->
+                    current + caretBottom - (chatInputHeight - chatPadV)
+                else -> current
+            }.coerceIn(0f, chatScrollState.maxValue.toFloat())
+            if (kotlin.math.abs(target - current) > 1f) {
+                chatScrollState.scrollTo(target.toInt())
+            }
         }
         FallingCursorDrop(
             modifier = Modifier.weight(1f),
@@ -1046,10 +2269,11 @@ private fun ChatInputBar(
                 val offset = chatValue.selection.start
                     .coerceIn(0, layout.layoutInput.text.length)
                 val caretRect = layout.getCursorRect(offset)
+                val scroll = chatScrollState.value.toFloat()
                 CaretInfo(
                     x = chatPadH + caretRect.left,
-                    top = chatPadV + caretRect.top,
-                    bottom = chatPadV + caretRect.bottom
+                    top = chatPadV + caretRect.top - scroll,
+                    bottom = chatPadV + caretRect.bottom - scroll
                 )
             },
             dropOffset = { tap, _ ->
@@ -1057,14 +2281,42 @@ private fun ChatInputBar(
                 if (layout == null) {
                     tap
                 } else {
+                    val scroll = chatScrollState.value.toFloat()
                     val offset = layout.getOffsetForPosition(
-                        Offset(tap.x - chatPadH, tap.y - chatPadV)
+                        Offset(
+                            tap.x - chatPadH,
+                            (tap.y + scroll - chatPadV).coerceAtLeast(0f)
+                        )
                     )
                     val caret = layout.getCursorRect(offset)
-                    Offset(chatPadH + caret.left + chatCaretHalf, chatPadV + caret.bottom)
+                    Offset(
+                        chatPadH + caret.left + chatCaretHalf,
+                        chatPadV + caret.bottom - scroll
+                    )
                 }
+            },
+            dropTargetProvider = target@{ _ ->
+                val layout = chatTextLayout ?: return@target null
+                if (!chatValue.selection.collapsed) return@target null
+                val offset = chatValue.selection.start
+                    .coerceIn(0, layout.layoutInput.text.length)
+                val caret = layout.getCursorRect(offset)
+                val scroll = chatScrollState.value.toFloat()
+                Offset(
+                    chatPadH + caret.left + chatCaretHalf,
+                    chatPadV + caret.bottom - scroll
+                )
             }
         ) { _ ->
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = maxChatInputHeight)
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(colors.surfaceVariant)
+                    .verticalScroll(chatScrollState)
+                    .onSizeChanged { chatInputHeight = it.height }
+            ) {
             BasicTextField(
                 value = chatValue,
                 onValueChange = { updated ->
@@ -1073,8 +2325,41 @@ private fun ChatInputBar(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(colors.surfaceVariant)
+                    // 输入框内边距区域本身不归 BasicTextField 处理，点左边空白时
+                    // 手动聚焦并把光标放到对应位置，避免点不到/光标不动
+                    .pointerInput(Unit) {
+                        detectTapGestures { pos ->
+                            val leftPad = chatPadH
+                            val right = size.width - chatPadH
+                            val top = chatPadV
+                            val bottom = size.height - chatPadV
+                            val inTextArea = pos.x in leftPad..right &&
+                                pos.y in top..bottom
+                            if (!inTextArea) {
+                                chatFocus.requestFocus()
+                                val length = chatValue.text.length
+                                val offset = when {
+                                    pos.x < leftPad -> 0
+                                    pos.x > right -> length
+                                    else -> {
+                                        val layout = chatTextLayout
+                                        if (layout != null) {
+                                            layout.getOffsetForPosition(
+                                                Offset(
+                                                    (pos.x - leftPad).coerceAtLeast(0f),
+                                                    (pos.y - top).coerceAtLeast(0f)
+                                                )
+                                            ).coerceIn(0, length)
+                                        } else {
+                                            0
+                                        }
+                                    }
+                                }
+                                chatValue = chatValue.copy(selection = TextRange(offset))
+                            }
+                        }
+                    }
+                    .focusRequester(chatFocus)
                     .padding(horizontal = 14.dp, vertical = 10.dp)
                     .onFocusChanged { chatFocused = it.isFocused },
                 textStyle = TextStyle(fontSize = 15.sp, lineHeight = 20.sp, color = colors.onSurface),
@@ -1082,7 +2367,7 @@ private fun ChatInputBar(
                     if (chatFade) Color.Transparent else colors.primary
                 ),
                 onTextLayout = { chatTextLayout = it },
-                maxLines = 4,
+                maxLines = Int.MAX_VALUE,
                 decorationBox = { innerTextField ->
                     Box {
                         if (input.isEmpty()) {
@@ -1099,6 +2384,7 @@ private fun ChatInputBar(
                     }
                 }
             )
+            }
         }
 
         Spacer(Modifier.width(8.dp))
@@ -1117,6 +2403,80 @@ private fun ChatInputBar(
                 contentDescription = stringResource(R.string.chat_send),
                 tint = if (canSend) colors.onPrimary else colors.onSurfaceVariant,
                 modifier = Modifier.size(20.dp)
+            )
+        }
+    }
+}
+
+/** DeepSeek 网页端样式：图标 + 已思考（用时）+ 箭头，默认收起。 */
+@Composable
+private fun ReasoningBlock(
+    text: String,
+    durationMs: Long,
+    thinking: Boolean = false
+) {
+    val colors = MaterialTheme.colorScheme
+    var expanded by remember { mutableStateOf(false) }
+    val arrowRotation by animateFloatAsState(
+        targetValue = if (expanded) 180f else 0f,
+        label = "reasonArrow"
+    )
+    Column(
+        modifier = Modifier
+            .widthIn(max = 280.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(colors.surfaceVariant.copy(alpha = 0.45f))
+            .border(0.7.dp, colors.outlineVariant, RoundedCornerShape(12.dp))
+            .animateContentSize()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { expanded = !expanded }
+                .padding(horizontal = 10.dp, vertical = 7.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Psychology,
+                contentDescription = null,
+                tint = colors.primary,
+                modifier = Modifier.size(15.dp)
+            )
+            Spacer(Modifier.width(5.dp))
+            val label = when {
+                thinking -> stringResource(R.string.thinking_streaming)
+                durationMs > 0L -> stringResource(R.string.reasoning_done) +
+                    stringResource(
+                        R.string.reasoning_duration,
+                        (durationMs / 1000L).toInt().coerceAtLeast(1)
+                    )
+                else -> stringResource(R.string.reasoning_done)
+            }
+            Text(
+                text = label,
+                fontSize = 11.5.sp,
+                color = colors.primary,
+                modifier = Modifier.weight(1f)
+            )
+            Icon(
+                imageVector = Icons.Filled.KeyboardArrowDown,
+                contentDescription = stringResource(
+                    if (expanded) R.string.context_summary_collapse
+                    else R.string.context_summary_expand
+                ),
+                tint = colors.onSurfaceVariant,
+                modifier = Modifier
+                    .size(18.dp)
+                    .rotate(arrowRotation)
+            )
+        }
+        AnimatedVisibility(visible = expanded) {
+            Text(
+                text = text,
+                fontSize = 12.5.sp,
+                lineHeight = 18.sp,
+                color = colors.onSurfaceVariant,
+                modifier = Modifier.padding(start = 10.dp, end = 10.dp, bottom = 8.dp)
             )
         }
     }
@@ -1174,6 +2534,13 @@ private fun MessageBubble(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = if (isUser) Alignment.End else Alignment.Start
         ) {
+            if (!isUser && message.reasoning.isNotBlank()) {
+                ReasoningBlock(
+                    text = message.reasoning,
+                    durationMs = message.reasoningMs
+                )
+                Spacer(Modifier.height(5.dp))
+            }
             Box(
                 modifier = Modifier
                     .widthIn(max = 280.dp)

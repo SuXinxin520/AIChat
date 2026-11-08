@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -41,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import com.aichat.app.R
 import com.aichat.app.data.AppPrefs
 import com.aichat.app.data.ProfileStore
+import com.aichat.app.data.PromptLibraryStore
 import com.aichat.app.data.Storage
 import com.aichat.app.data.UserProfile
 import kotlinx.coroutines.Dispatchers
@@ -55,7 +57,12 @@ fun UserProfileScreen(onBack: () -> Unit) {
     val saved = remember { ProfileStore.loadUser(context) }
 
     var name by rememberSaveable { mutableStateOf(saved.name) }
-    var prompt by rememberSaveable { mutableStateOf(saved.prompt) }
+    var promptIds by rememberSaveable(
+        stateSaver = listSaver(
+            save = { it },
+            restore = { it }
+        )
+    ) { mutableStateOf(saved.promptIds) }
     var avatarPath by rememberSaveable { mutableStateOf(saved.avatarPath) }
     var showUnsaved by remember { mutableStateOf(false) }
 
@@ -78,16 +85,24 @@ fun UserProfileScreen(onBack: () -> Unit) {
 
     // 和进来时的内容对比，判断有没有改动
     val dirty = name.trim() != saved.name ||
-        prompt.trim() != saved.prompt ||
+        promptIds != saved.promptIds ||
         avatarPath != saved.avatarPath
 
     val save: () -> Unit = {
+        val library = PromptLibraryStore.load(context)
+        val cleanIds = promptIds.distinct().filter { library.prompt(it) != null }
+        val snapshot = when {
+            cleanIds.isNotEmpty() -> library.composePrompt(cleanIds)
+            saved.promptIds.isEmpty() -> saved.prompt
+            else -> ""
+        }
         ProfileStore.saveUser(
             context,
             UserProfile(
                 name = name.trim(),
-                prompt = prompt.trim(),
-                avatarPath = avatarPath
+                prompt = snapshot,
+                avatarPath = avatarPath,
+                promptIds = cleanIds
             )
         )
     }
@@ -164,15 +179,11 @@ fun UserProfileScreen(onBack: () -> Unit) {
 
             Spacer(Modifier.height(14.dp))
 
-            PromptField(
+            PromptSelector(
                 label = stringResource(R.string.profile_prompt),
-                value = prompt,
-                onValueChange = { prompt = it },
-                placeholder = stringResource(R.string.profile_prompt_hint),
-                // 固定高度 + 框内滚动 + 右侧滚动条
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(180.dp)
+                selectedIds = promptIds,
+                onSelectionChange = { promptIds = it },
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(Modifier.height(24.dp))

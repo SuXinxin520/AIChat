@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -57,6 +58,8 @@ data class CaretInfo(val x: Float, val top: Float, val bottom: Float)
 fun FallingCursorDrop(
     modifier: Modifier = Modifier,
     dropOffset: ((tap: Offset, boxSize: IntSize) -> Offset)? = null,
+    /** 点击后输入框更新选区，下一帧用这里返回的真实光标位置校正水滴落点。 */
+    dropTargetProvider: ((boxSize: IntSize) -> Offset?)? = null,
     caretProvider: ((boxSize: IntSize) -> CaretInfo?)? = null,
     content: @Composable (handleColor: Color) -> Unit
 ) {
@@ -166,6 +169,12 @@ fun FallingCursorDrop(
                                 falling = withFall
                                 dropJob?.cancel()
                                 dropJob = scope.launch {
+                                    // 等输入框处理完点击、更新选区后再取一次光标位置，
+                                    // 避免多行滚动时水滴落在点击处而不是光标处
+                                    if (dropTargetProvider != null) {
+                                        withFrameNanos { }
+                                        dropTargetProvider(size)?.let { dropPos = it }
+                                    }
                                     fall.snapTo(0f)
                                     fall.animateTo(
                                         targetValue = 1f,

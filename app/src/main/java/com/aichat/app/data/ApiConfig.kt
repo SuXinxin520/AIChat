@@ -12,8 +12,28 @@ data class ApiConfig(
     val baseUrl: String = "",
     val apiKey: String = "",
     val model: String = "",
-    val enabled: Boolean = true
-)
+    val enabled: Boolean = true,
+    /** 模型上下文窗口，单位 token；用于上下文预算和用量提示。 */
+    val contextLimit: Int = DEFAULT_CONTEXT_LIMIT,
+    /** 达到阈值时是否自动把旧消息压缩成摘要。 */
+    val autoCompress: Boolean = true,
+    /** 上下文使用率达到该百分比时触发自动压缩（10–100）。 */
+    val compressThreshold: Int = 100,
+    /** 旧版全局思考开关；聊天实际使用按角色的 RoleChatSettings。 */
+    val thinkingEnabled: Boolean = false,
+    /** DeepSeek 思考强度：low / high / max。 */
+    val thinkingEffort: String = "high",
+    /** 是否在发送前调用 DeepSeek 的网页搜索/抓取。 */
+    val webSearchEnabled: Boolean = false
+) {
+    companion object {
+        const val DEFAULT_CONTEXT_LIMIT = 32_768
+        const val MIN_CONTEXT_LIMIT = 4_096
+        const val MAX_CONTEXT_LIMIT = 2_000_000
+        const val MIN_COMPRESS_THRESHOLD = 10
+        const val MAX_COMPRESS_THRESHOLD = 100
+    }
+}
 
 /** 常用服务商的预设：选中后填入地址，并给出可选模型。 */
 data class ApiProvider(
@@ -106,7 +126,20 @@ object ApiConfigStore {
                     baseUrl = item.optString("baseUrl"),
                     apiKey = item.optString("apiKey"),
                     model = item.optString("model"),
-                    enabled = item.optBoolean("enabled", true)
+                    enabled = item.optBoolean("enabled", true),
+                    contextLimit = item.optInt(
+                        "contextLimit",
+                        ApiConfig.DEFAULT_CONTEXT_LIMIT
+                    ).coerceIn(ApiConfig.MIN_CONTEXT_LIMIT, ApiConfig.MAX_CONTEXT_LIMIT),
+                    autoCompress = item.optBoolean("autoCompress", true),
+                    compressThreshold = item.optInt("compressThreshold", 100).coerceIn(
+                        ApiConfig.MIN_COMPRESS_THRESHOLD,
+                        ApiConfig.MAX_COMPRESS_THRESHOLD
+                    ),
+                    thinkingEnabled = item.optBoolean("thinkingEnabled", false),
+                    thinkingEffort = item.optString("thinkingEffort", "high")
+                        .takeIf { it in setOf("low", "high", "max") } ?: "high",
+                    webSearchEnabled = item.optBoolean("webSearchEnabled", false)
                 )
             }
         }.getOrDefault(emptyList())
@@ -123,6 +156,12 @@ object ApiConfigStore {
                     put("apiKey", config.apiKey)
                     put("model", config.model)
                     put("enabled", config.enabled)
+                    put("contextLimit", config.contextLimit)
+                    put("autoCompress", config.autoCompress)
+                    put("compressThreshold", config.compressThreshold)
+                    put("thinkingEnabled", config.thinkingEnabled)
+                    put("thinkingEffort", config.thinkingEffort)
+                    put("webSearchEnabled", config.webSearchEnabled)
                 }
             )
         }

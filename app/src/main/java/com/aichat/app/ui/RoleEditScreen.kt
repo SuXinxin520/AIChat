@@ -30,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -45,8 +46,12 @@ import com.aichat.app.data.AppPrefs
 import com.aichat.app.data.DraftStore
 import com.aichat.app.data.MessageStore
 import com.aichat.app.data.ProfileStore
+import com.aichat.app.data.PromptLibraryStore
 import com.aichat.app.data.Role
+import com.aichat.app.data.RoleChatSettingsStore
 import com.aichat.app.data.Storage
+import com.aichat.app.data.SummaryStore
+import com.aichat.app.data.UsageStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -61,7 +66,12 @@ fun RoleEditScreen(roleId: String?, onBack: () -> Unit) {
     }
 
     var name by rememberSaveable { mutableStateOf(existing?.name ?: "") }
-    var prompt by rememberSaveable { mutableStateOf(existing?.prompt ?: "") }
+    var promptIds by rememberSaveable(
+        stateSaver = listSaver(
+            save = { it },
+            restore = { it }
+        )
+    ) { mutableStateOf(existing?.promptIds ?: emptyList()) }
     var avatarPath by rememberSaveable { mutableStateOf(existing?.avatarPath) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showClearDialog by remember { mutableStateOf(false) }
@@ -87,10 +97,10 @@ fun RoleEditScreen(roleId: String?, onBack: () -> Unit) {
 
     // 和进来时的内容对比，判断有没有改动
     val initialName = existing?.name ?: ""
-    val initialPrompt = existing?.prompt ?: ""
+    val initialPromptIds = existing?.promptIds ?: emptyList()
     val initialAvatar = existing?.avatarPath
     val dirty = name.trim() != initialName ||
-        prompt.trim() != initialPrompt ||
+        promptIds != initialPromptIds ||
         avatarPath != initialAvatar
 
     val save: () -> Boolean = {
@@ -98,17 +108,25 @@ fun RoleEditScreen(roleId: String?, onBack: () -> Unit) {
             scope.launch { snackbarHostState.showSnackbar(nameRequired) }
             false
         } else {
+            val library = PromptLibraryStore.load(context)
+            val cleanIds = promptIds.distinct().filter { library.prompt(it) != null }
+            val snapshot = when {
+                cleanIds.isNotEmpty() -> library.composePrompt(cleanIds)
+                existing != null && existing.promptIds.isEmpty() -> existing.prompt
+                else -> ""
+            }
             ProfileStore.upsertRole(
                 context,
                 Role(
                     id = existing?.id ?: "",
                     name = name.trim(),
-                    prompt = prompt.trim(),
+                    prompt = snapshot,
                     avatarPath = avatarPath,
                     lastMessage = existing?.lastMessage ?: "",
                     lastMessageAt = existing?.lastMessageAt ?: 0L,
                     createdAt = existing?.createdAt?.takeIf { it > 0L }
-                        ?: System.currentTimeMillis()
+                        ?: System.currentTimeMillis(),
+                    promptIds = cleanIds
                 )
             )
             true
@@ -149,7 +167,6 @@ fun RoleEditScreen(roleId: String?, onBack: () -> Unit) {
                     if (existing == null) R.string.role_edit_add else R.string.role_edit_edit
                 ),
                 onBack = requestBack,
-                showDivider = true
             )
         }
     ) { innerPadding ->
@@ -193,15 +210,11 @@ fun RoleEditScreen(roleId: String?, onBack: () -> Unit) {
 
             Spacer(Modifier.height(14.dp))
 
-            PromptField(
+            PromptSelector(
                 label = stringResource(R.string.role_prompt),
-                value = prompt,
-                onValueChange = { prompt = it },
-                placeholder = stringResource(R.string.role_prompt_hint),
-                // 固定高度 + 框内滚动 + 右侧滚动条
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(180.dp)
+                selectedIds = promptIds,
+                onSelectionChange = { promptIds = it },
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(Modifier.height(24.dp))
@@ -284,6 +297,8 @@ fun RoleEditScreen(roleId: String?, onBack: () -> Unit) {
                     onClick = {
                         MessageStore.clearRole(context, existing.id)
                         DraftStore.clear(context, existing.id)
+                        SummaryStore.clear(context, existing.id)
+                        UsageStore.clear(context, existing.id)
                         ProfileStore.upsertRole(
                             context,
                             existing.copy(lastMessage = "", lastMessageAt = 0L)
@@ -327,6 +342,9 @@ fun RoleEditScreen(roleId: String?, onBack: () -> Unit) {
                         ProfileStore.deleteRole(context, existing.id)
                         MessageStore.clearRole(context, existing.id)
                         DraftStore.clear(context, existing.id)
+                        SummaryStore.clear(context, existing.id)
+                        UsageStore.clear(context, existing.id)
+                        RoleChatSettingsStore.clear(context, existing.id)
                         showDeleteDialog = false
                         onBack()
                     }

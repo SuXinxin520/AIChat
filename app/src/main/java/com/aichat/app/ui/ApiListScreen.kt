@@ -64,7 +64,6 @@ fun ApiListScreen(
             SubPageTopBar(
                 title = stringResource(R.string.api_title),
                 onBack = onBack,
-                showDivider = true,
                 action = if (configs.isNotEmpty()) {
                     {
                         TextButton(onClick = onAdd) {

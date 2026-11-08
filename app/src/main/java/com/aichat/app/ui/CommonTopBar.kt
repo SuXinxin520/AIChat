@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -25,9 +24,7 @@ import com.aichat.app.R
 fun SubPageTopBar(
     title: String,
     onBack: () -> Unit,
-    action: (@Composable () -> Unit)? = null,
-    /** 列表型页面在标题栏下加一条分隔线，和首页保持一致 */
-    showDivider: Boolean = false
+    action: (@Composable () -> Unit)? = null
 ) {
     val colors = MaterialTheme.colorScheme
     Column {
@@ -53,9 +50,5 @@ fun SubPageTopBar(
             actions = { action?.invoke() },
             colors = TopAppBarDefaults.topAppBarColors(containerColor = colors.background)
         )
-
-        if (showDivider) {
-            HorizontalDivider(thickness = 0.8.dp, color = colors.outline)
-        }
     }
 }

@@ -46,6 +46,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -88,6 +89,7 @@ import com.aichat.app.data.ConnectionTester
 import com.aichat.app.data.TestResult
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ApiEditScreen(configId: String?, onBack: () -> Unit) {
     val colors = MaterialTheme.colorScheme
@@ -102,6 +104,15 @@ fun ApiEditScreen(configId: String?, onBack: () -> Unit) {
     var baseUrl by rememberSaveable { mutableStateOf(existing?.baseUrl ?: fallback.baseUrl) }
     var apiKey by rememberSaveable { mutableStateOf(existing?.apiKey ?: "") }
     var model by rememberSaveable { mutableStateOf(existing?.model ?: fallback.defaultModel) }
+    var contextLimitText by rememberSaveable {
+        mutableStateOf(
+            (existing?.contextLimit ?: ApiConfig.DEFAULT_CONTEXT_LIMIT).toString()
+        )
+    }
+    var autoCompress by rememberSaveable { mutableStateOf(existing?.autoCompress ?: true) }
+    var thresholdText by rememberSaveable {
+        mutableStateOf((existing?.compressThreshold ?: 100).toString())
+    }
     var keyVisible by rememberSaveable { mutableStateOf(false) }
     var testing by remember { mutableStateOf(false) }
     var result by remember { mutableStateOf<TestResult?>(null) }
@@ -118,10 +129,16 @@ fun ApiEditScreen(configId: String?, onBack: () -> Unit) {
     val initialUrl = existing?.baseUrl ?: fallback.baseUrl
     val initialKey = existing?.apiKey ?: ""
     val initialModel = existing?.model ?: fallback.defaultModel
+    val initialLimit = (existing?.contextLimit ?: ApiConfig.DEFAULT_CONTEXT_LIMIT).toString()
+    val initialAutoCompress = existing?.autoCompress ?: true
+    val initialThreshold = (existing?.compressThreshold ?: 100).toString()
     val dirty = name.trim() != initialName ||
         baseUrl.trim() != initialUrl ||
         apiKey.trim() != initialKey ||
-        model.trim() != initialModel
+        model.trim() != initialModel ||
+        contextLimitText.trim() != initialLimit ||
+        autoCompress != initialAutoCompress ||
+        thresholdText.trim() != initialThreshold
 
     val saveApi: () -> Boolean = {
         if (baseUrl.isBlank()) {
@@ -140,7 +157,20 @@ fun ApiEditScreen(configId: String?, onBack: () -> Unit) {
                     baseUrl = baseUrl.trim(),
                     apiKey = apiKey.trim(),
                     model = model.trim(),
-                    enabled = existing?.enabled ?: true
+                    enabled = existing?.enabled ?: true,
+                    contextLimit = contextLimitText.trim().toIntOrNull()
+                        ?.coerceIn(
+                            ApiConfig.MIN_CONTEXT_LIMIT,
+                            ApiConfig.MAX_CONTEXT_LIMIT
+                        )
+                        ?: ApiConfig.DEFAULT_CONTEXT_LIMIT,
+                    autoCompress = autoCompress,
+                    compressThreshold = thresholdText.trim().toIntOrNull()
+                        ?.coerceIn(
+                            ApiConfig.MIN_COMPRESS_THRESHOLD,
+                            ApiConfig.MAX_COMPRESS_THRESHOLD
+                        )
+                        ?: 100
                 )
             )
             true
@@ -166,7 +196,6 @@ fun ApiEditScreen(configId: String?, onBack: () -> Unit) {
                     if (existing == null) R.string.api_edit_add else R.string.api_edit_edit
                 ),
                 onBack = requestBack,
-                showDivider = true
             )
         }
     ) { innerPadding ->
@@ -295,6 +324,98 @@ fun ApiEditScreen(configId: String?, onBack: () -> Unit) {
                 },
                 options = currentProvider?.models ?: emptyList()
             )
+
+            Spacer(Modifier.height(14.dp))
+
+            ConfigField(
+                label = stringResource(R.string.api_context_limit),
+                value = contextLimitText,
+                onValueChange = { value ->
+                    contextLimitText = value.filter { it.isDigit() }.take(7)
+                },
+                placeholder = ApiConfig.DEFAULT_CONTEXT_LIMIT.toString(),
+                keyboardType = KeyboardType.Number
+            )
+            Spacer(Modifier.height(6.dp))
+            Text(
+                text = stringResource(R.string.api_context_limit_hint),
+                fontSize = 12.sp,
+                color = colors.onSurfaceVariant,
+                modifier = Modifier.padding(start = 4.dp)
+            )
+
+            Spacer(Modifier.height(10.dp))
+            Text(
+                text = stringResource(R.string.api_context_presets),
+                fontSize = 12.sp,
+                color = colors.onSurfaceVariant,
+                modifier = Modifier.padding(start = 4.dp)
+            )
+            Spacer(Modifier.height(6.dp))
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                listOf(
+                    32768 to "32K",
+                    65536 to "64K",
+                    131072 to "128K",
+                    262144 to "256K",
+                    1048576 to "1M"
+                ).forEach { (value, label) ->
+                    SelectChip(
+                        label = label,
+                        selected = contextLimitText.trim().toIntOrNull() == value,
+                        onClick = { contextLimitText = value.toString() }
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(18.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(R.string.api_auto_compress),
+                        fontSize = 14.5.sp,
+                        color = colors.onSurface
+                    )
+                    Spacer(Modifier.height(3.dp))
+                    Text(
+                        text = stringResource(R.string.api_auto_compress_desc),
+                        fontSize = 12.sp,
+                        color = colors.onSurfaceVariant
+                    )
+                }
+                Spacer(Modifier.width(12.dp))
+                Switch(
+                    checked = autoCompress,
+                    onCheckedChange = { autoCompress = it }
+                )
+            }
+
+            if (autoCompress) {
+                Spacer(Modifier.height(12.dp))
+                ConfigField(
+                    label = stringResource(R.string.api_auto_compress_threshold),
+                    value = thresholdText,
+                    onValueChange = { value ->
+                        thresholdText = value.filter { it.isDigit() }.take(3)
+                    },
+                    placeholder = "100",
+                    keyboardType = KeyboardType.Number
+                )
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    text = stringResource(R.string.api_auto_compress_threshold_hint),
+                    fontSize = 12.sp,
+                    color = colors.onSurfaceVariant,
+                    modifier = Modifier.padding(start = 4.dp)
+                )
+            }
 
             Spacer(Modifier.height(24.dp))
 

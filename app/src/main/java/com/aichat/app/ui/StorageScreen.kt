@@ -75,7 +75,6 @@ fun StorageScreen(onBack: () -> Unit) {
             SubPageTopBar(
                 title = stringResource(R.string.storage_title),
                 onBack = onBack,
-                showDivider = true
             )
         }
     ) { innerPadding ->

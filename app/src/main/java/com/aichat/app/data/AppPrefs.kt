@@ -13,6 +13,11 @@ object AppPrefs {
     private const val KEY_CONFIRM_UNSAVED = "confirm_unsaved"
     private const val KEY_CURSOR_DROP = "cursor_drop_animation"
     private const val KEY_CURSOR_FADE = "cursor_fade_animation"
+    private const val KEY_CHAT_KEEP_AWAKE = "chat_keep_awake"
+
+    /** system=跟随系统；always=聊天时始终常亮；数字=无操作多少分钟后允许系统息屏。 */
+    const val KEEP_AWAKE_SYSTEM = "system"
+    const val KEEP_AWAKE_ALWAYS = "always"
 
     const val LANGUAGE_SYSTEM = "system"
     const val THEME_SYSTEM = "system"
@@ -74,5 +79,14 @@ object AppPrefs {
 
     fun setCursorFadeEnabled(context: Context, enabled: Boolean) {
         prefs(context).edit().putBoolean(KEY_CURSOR_FADE, enabled).apply()
+    }
+
+    /** 聊天页屏幕常亮设置，默认跟随系统。 */
+    fun chatKeepAwake(context: Context): String =
+        prefs(context).getString(KEY_CHAT_KEEP_AWAKE, KEEP_AWAKE_SYSTEM)
+            ?: KEEP_AWAKE_SYSTEM
+
+    fun setChatKeepAwake(context: Context, value: String) {
+        prefs(context).edit().putString(KEY_CHAT_KEEP_AWAKE, value).apply()
     }
 }

@@ -7,7 +7,9 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -59,6 +61,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.activity.compose.BackHandler
+import androidx.compose.material.icons.automirrored.outlined.MenuBook
 import com.aichat.app.R
 import com.aichat.app.data.Draft
 import com.aichat.app.data.DraftStore
@@ -71,7 +75,8 @@ fun HomeScreen(
     onOpenSettings: () -> Unit,
     onOpenProfile: () -> Unit,
     onAddRole: () -> Unit,
-    onOpenRole: (String) -> Unit
+    onOpenRole: (String) -> Unit,
+    onOpenPromptLibrary: () -> Unit
 ) {
     val colors = MaterialTheme.colorScheme
     val context = LocalContext.current
@@ -79,6 +84,8 @@ fun HomeScreen(
     val roles = remember { ProfileStore.loadRoles(context) }
     val drafts = remember { DraftStore.loadAll(context) }
     var menuOpen by remember { mutableStateOf(false) }
+
+    BackHandler(enabled = menuOpen) { menuOpen = false }
 
     // 加号旋转 135° 变成叉，带一点回弹
     val fabRotation by animateFloatAsState(
@@ -115,60 +122,90 @@ fun HomeScreen(
                     )
                 }
 
-                FloatingActionButton(
-                    onClick = { menuOpen = !menuOpen },
-                    shape = CircleShape,
-                    containerColor = colors.primary,
-                    contentColor = colors.onPrimary,
-                    elevation = FloatingActionButtonDefaults.elevation(
-                        defaultElevation = 6.dp,
-                        pressedElevation = 10.dp,
-                        focusedElevation = 6.dp,
-                        hoveredElevation = 8.dp
-                    )
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Add,
-                        contentDescription = stringResource(R.string.role_sheet_title),
-                        modifier = Modifier
-                            .size(26.dp)
-                            .rotate(fabRotation)
-                    )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    AnimatedVisibility(
+                        visible = menuOpen,
+                        enter = fadeIn() +
+                            slideInHorizontally(initialOffsetX = { it / 2 }) +
+                            scaleIn(initialScale = 0.8f),
+                        exit = fadeOut() + slideOutHorizontally(targetOffsetX = { it / 2 })
+                    ) {
+                        FloatingActionItem(
+                            label = stringResource(R.string.prompt_library_title),
+                            icon = Icons.AutoMirrored.Outlined.MenuBook,
+                            onClick = {
+                                menuOpen = false
+                                onOpenPromptLibrary()
+                            },
+                            modifier = Modifier.padding(end = 10.dp)
+                        )
+                    }
+
+                    FloatingActionButton(
+                        onClick = { menuOpen = !menuOpen },
+                        shape = CircleShape,
+                        containerColor = colors.primary,
+                        contentColor = colors.onPrimary,
+                        elevation = FloatingActionButtonDefaults.elevation(
+                            defaultElevation = 6.dp,
+                            pressedElevation = 10.dp,
+                            focusedElevation = 6.dp,
+                            hoveredElevation = 8.dp
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Add,
+                            contentDescription = stringResource(R.string.role_sheet_title),
+                            modifier = Modifier
+                                .size(26.dp)
+                                .rotate(fabRotation)
+                        )
+                    }
                 }
             }
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-            HomeHeader(
-                profile = profile,
-                onOpenProfile = onOpenProfile,
-                onOpenSettings = onOpenSettings
-            )
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                HomeHeader(
+                    profile = profile,
+                    onOpenProfile = onOpenProfile,
+                    onOpenSettings = onOpenSettings
+                )
 
-            // 头部与角色列表之间的分界线
-            HorizontalDivider(thickness = 0.8.dp, color = colors.outline)
-
-            if (roles.isEmpty()) {
-                EmptyRoles(modifier = Modifier.fillMaxSize())
-            } else {
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(roles, key = { it.id }) { role ->
-                        RoleRow(
-                            role = role,
-                            draft = drafts[role.id],
-                            onClick = { onOpenRole(role.id) }
-                        )
-                        HorizontalDivider(
-                            modifier = Modifier.padding(start = 82.dp, end = 20.dp),
-                            thickness = 0.6.dp,
-                            color = colors.outlineVariant
-                        )
+                if (roles.isEmpty()) {
+                    EmptyRoles(modifier = Modifier.fillMaxSize())
+                } else {
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        items(roles, key = { it.id }) { role ->
+                            RoleRow(
+                                role = role,
+                                draft = drafts[role.id],
+                                onClick = { onOpenRole(role.id) }
+                            )
+                            HorizontalDivider(
+                                modifier = Modifier.padding(start = 82.dp, end = 20.dp),
+                                thickness = 0.6.dp,
+                                color = colors.outlineVariant
+                            )
+                        }
                     }
                 }
+            }
+
+            // 菜单展开时点空白处收起（FAB 槽在内容之上，不受这层影响）
+            if (menuOpen) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable(interactionSource = null, indication = null) {
+                            menuOpen = false
+                        }
+                )
             }
         }
     }
@@ -179,10 +216,13 @@ fun HomeScreen(
 private fun FloatingActionItem(
     label: String,
     icon: ImageVector,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier.padding(end = 6.dp)
 ) {
     val colors = MaterialTheme.colorScheme
     Row(
+        // 竖排时 44dp 圆右侧收 6dp：圆心与 56dp 加号 FAB 的圆心对齐
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {

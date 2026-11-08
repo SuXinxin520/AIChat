@@ -14,6 +14,10 @@ data class ChatMessage(
     val imagePath: String = "",
     val fileName: String = "",
     val filePath: String = "",
+    /** DeepSeek 等模型的思考过程，仅展示，不再回传给接口。 */
+    val reasoning: String = "",
+    /** 思考用时（毫秒），用于“已思考（用时 X 秒）”。 */
+    val reasoningMs: Long = 0L,
     val at: Long = 0L
 )
 
@@ -39,6 +43,8 @@ object MessageStore {
                     imagePath = item.optString("imagePath"),
                     fileName = item.optString("fileName"),
                     filePath = item.optString("filePath"),
+                    reasoning = item.optString("reasoning"),
+                    reasoningMs = item.optLong("reasoningMs", 0L),
                     at = item.optLong("at", 0L)
                 )
             }
@@ -57,6 +63,8 @@ object MessageStore {
                     put("imagePath", message.imagePath)
                     put("fileName", message.fileName)
                     put("filePath", message.filePath)
+                    put("reasoning", message.reasoning)
+                    put("reasoningMs", message.reasoningMs)
                     put("at", message.at)
                 }
             )

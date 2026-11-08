@@ -33,7 +33,6 @@ fun AboutScreen(onBack: () -> Unit) {
             SubPageTopBar(
                 title = stringResource(R.string.settings_about),
                 onBack = onBack,
-                showDivider = true
             )
         }
     ) { innerPadding ->
